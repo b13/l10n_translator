@@ -1,6 +1,7 @@
 <?php
-namespace Lightwerk\L10nTranslator\Controller\Ajax;
+namespace B13\L10nTranslator\Controller\Ajax;
 
+use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 /*
  * This file is part of TYPO3 CMS-based extension l10n_translator by b13.
  *
@@ -9,11 +10,11 @@ namespace Lightwerk\L10nTranslator\Controller\Ajax;
  * of the License, or any later version.
  */
 
-use Lightwerk\L10nTranslator\Configuration\L10nConfiguration;
-use Lightwerk\L10nTranslator\Domain\Factory\TranslationFileFactory;
-use Lightwerk\L10nTranslator\Domain\Model\Translation;
-use Lightwerk\L10nTranslator\Domain\Service\TranslationFileService;
-use Lightwerk\L10nTranslator\Domain\Service\TranslationFileWriterService;
+use B13\L10nTranslator\Configuration\L10nConfiguration;
+use B13\L10nTranslator\Domain\Factory\TranslationFileFactory;
+use B13\L10nTranslator\Domain\Model\Translation;
+use B13\L10nTranslator\Domain\Service\TranslationFileService;
+use B13\L10nTranslator\Domain\Service\TranslationFileWriterService;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Http\JsonResponse;
@@ -27,9 +28,8 @@ use TYPO3\CMS\Extbase\Object\ObjectManager;
  */
 class TranslationController
 {
-
     /**
-     * @var \Lightwerk\L10nTranslator\Domain\Factory\TranslationFileFactory
+     * @var \B13\L10nTranslator\Domain\Factory\TranslationFileFactory
      */
     protected $translationFileFactory;
 
@@ -39,12 +39,12 @@ class TranslationController
     protected $objectManager;
 
     /**
-     * @var \Lightwerk\L10nTranslator\Configuration\L10nConfiguration
+     * @var \B13\L10nTranslator\Configuration\L10nConfiguration
      */
     protected $l10nConfiguration;
 
     /**
-     * @var \Lightwerk\L10nTranslator\Domain\Service\TranslationFileWriterService
+     * @var \B13\L10nTranslator\Domain\Service\TranslationFileWriterService
      */
     protected $translationFileWriterService;
 
@@ -54,7 +54,7 @@ class TranslationController
     protected $cacheManager;
 
     /**
-     * @var \Lightwerk\L10nTranslator\Domain\Service\TranslationFileService
+     * @var \B13\L10nTranslator\Domain\Service\TranslationFileService
      */
     protected $translationFileService;
 
@@ -99,10 +99,9 @@ class TranslationController
     }
 
     /**
-     * @return void
      * @throws Exception
      */
-    protected function assureModuleAccess()
+    protected function assureModuleAccess(): void
     {
         $beUser = $this->getBeUser();
         if ($beUser->check('modules', 'web_L10nTranslatorTranslator') === false) {
@@ -110,18 +109,12 @@ class TranslationController
         }
     }
 
-    /**
-     * @return \TYPO3\CMS\Core\Authentication\BackendUserAuthentication
-     */
-    protected function getBeUser()
+    protected function getBeUser(): BackendUserAuthentication
     {
         return $GLOBALS['BE_USER'];
     }
 
-    /**
-     * @return void
-     */
-    protected function initializeObjects()
+    protected function initializeObjects(): void
     {
         $this->objectManager = GeneralUtility::makeInstance(ObjectManager::class);
         $this->l10nConfiguration = GeneralUtility::makeInstance(L10nConfiguration::class);
@@ -131,10 +124,7 @@ class TranslationController
         $this->cacheManager = $this->objectManager->get(CacheManager::class);
     }
 
-    /**
-     * @return void
-     */
-    protected function flushCache()
+    protected function flushCache(): void
     {
         $cacheFrontend = $this->cacheManager->getCache('l10n');
         $cacheFrontend->flush();
@@ -144,7 +134,7 @@ class TranslationController
      * @param mixed $postParams
      * @throws Exception
      */
-    protected function validateRequest($postParams)
+    protected function validateRequest($postParams): void
     {
         if (!is_array($postParams)) {
             throw new Exception('Invalid request.', 1467175555);

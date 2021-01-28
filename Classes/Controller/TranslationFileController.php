@@ -1,6 +1,10 @@
 <?php
-namespace Lightwerk\L10nTranslator\Controller;
+namespace B13\L10nTranslator\Controller;
 
+use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
+use B13\L10nTranslator\Utility\StringUtility;
+use B13\L10nTranslator\Domain\Factory\TranslationFileFactory;
+use B13\L10nTranslator\Exception;
 /*
  * This file is part of TYPO3 CMS-based extension l10n_translator by b13.
  *
@@ -9,8 +13,8 @@ namespace Lightwerk\L10nTranslator\Controller;
  * of the License, or any later version.
  */
 
-use Lightwerk\L10nTranslator\Configuration\L10nConfiguration;
-use Lightwerk\L10nTranslator\Domain\Model\Search;
+use B13\L10nTranslator\Configuration\L10nConfiguration;
+use B13\L10nTranslator\Domain\Model\Search;
 use TYPO3\CMS\Backend\View\BackendTemplateView;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -20,7 +24,7 @@ use TYPO3\CMS\Extbase\Property\PropertyMappingConfiguration;
  * @package TYPO3
  * @subpackage l10n_translator
  */
-class TranslationFileController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
+class TranslationFileController extends ActionController
 {
     /**
      * @var string
@@ -33,37 +37,32 @@ class TranslationFileController extends \TYPO3\CMS\Extbase\Mvc\Controller\Action
     protected $view;
 
     /**
-     * @var \Lightwerk\L10nTranslator\Domain\Factory\TranslationFileFactory
+     * @var \B13\L10nTranslator\Domain\Factory\TranslationFileFactory
      */
     protected $translationFileFactory;
 
     /**
-     * @var \Lightwerk\L10nTranslator\Utility\StringUtility
+     * @var \B13\L10nTranslator\Utility\StringUtility
      */
     protected $stringUtility;
 
     /**
-     * @param \Lightwerk\L10nTranslator\Utility\StringUtility $stringUtility
-     * @return void
+     * @param \B13\L10nTranslator\Utility\StringUtility $stringUtility
      */
-    public function injectStringUtility(\Lightwerk\L10nTranslator\Utility\StringUtility $stringUtility)
+    public function injectStringUtility(StringUtility $stringUtility): void
     {
         $this->stringUtility = $stringUtility;
     }
 
     /**
-     * @param \Lightwerk\L10nTranslator\Domain\Factory\TranslationFileFactory $translationFileFactory
-     * @return void
+     * @param \B13\L10nTranslator\Domain\Factory\TranslationFileFactory $translationFileFactory
      */
-    public function injectTranslationFileFactory(\Lightwerk\L10nTranslator\Domain\Factory\TranslationFileFactory $translationFileFactory)
+    public function injectTranslationFileFactory(TranslationFileFactory $translationFileFactory): void
     {
         $this->translationFileFactory = $translationFileFactory;
     }
 
-    /**
-     * @return void
-     */
-    protected function initializeListAction()
+    protected function initializeListAction(): void
     {
         parent::initializeAction();
         if ($this->request->hasArgument('search')) {
@@ -82,10 +81,9 @@ class TranslationFileController extends \TYPO3\CMS\Extbase\Mvc\Controller\Action
     }
 
     /**
-     * @param \Lightwerk\L10nTranslator\Domain\Model\Search $search
-     * @return void
+     * @param \B13\L10nTranslator\Domain\Model\Search $search
      */
-    public function listAction(Search $search = null)
+    public function listAction(Search $search = null): void
     {
         $l10nConfiguration = GeneralUtility::makeInstance(L10nConfiguration::class);
         $this->view->getModuleTemplate()->getPageRenderer()->loadRequireJsModule('TYPO3/CMS/L10nTranslator/L10nTranslator');
@@ -105,7 +103,7 @@ class TranslationFileController extends \TYPO3\CMS\Extbase\Mvc\Controller\Action
         if ($search !== null) {
             try {
                 $translationFiles = $this->translationFileFactory->findBySearch($search);
-            } catch (\Lightwerk\L10nTranslator\Exception $e) {
+            } catch (Exception $e) {
                 $this->addFlashMessage($e->getMessage() . ' - ' . $e->getCode(), '', FlashMessage::ERROR);
             }
         }

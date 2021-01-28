@@ -1,6 +1,6 @@
 <?php
 
-namespace Lightwerk\L10nTranslator\ViewHelpers;
+namespace B13\L10nTranslator\ViewHelpers;
 
 /*
  * This file is part of TYPO3 CMS-based extension l10n_translator by b13.
@@ -15,7 +15,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
 /**
  * Class StringUtility
  *
- * @author Achim Fritz <af@lightwerk.com>
+ * @author Achim Fritz <af@b13.com>
  * @package TYPO3
  * @subpackage l10n_translator
  */
@@ -26,7 +26,7 @@ class IfShouldBeTextAreaViewHelper extends AbstractConditionViewHelper
     /**
      * Initializes the "then" and "else" arguments
      */
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         parent::initializeArguments();
         $this->registerArgument('source', 'string', 'The source of the current label', true);

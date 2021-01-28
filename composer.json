@@ -1,5 +1,5 @@
 {
-	"name": "lw/l10n-translator",
+	"name": "b13/l10n-translator",
 	"type": "typo3-cms-extension",
 	"description": "Translate l10n files (label files) in a TYPO3 backend module. Maintain l10n folder with CLI tasks.",
 	"authors": [
@@ -14,7 +14,7 @@
 	],
 	"license": ["GPL-2.0-or-later"],
 	"require": {
-		"typo3/cms-core": "^9.5"
+		"typo3/cms-core": "^10.4"
 	},
 	"replace": {
 		"lw/l10n_translator": "self.version",
@@ -22,12 +22,12 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"Lightwerk\\L10nTranslator\\": "Classes/"
+			"B13\\L10nTranslator\\": "Classes/"
 		}
 	},
 	"autoload-dev": {
 		"psr-4": {
-			"Lightwerk\\L10nTranslator\\Tests\\": "Tests"
+			"B13\\L10nTranslator\\Tests\\": "Tests"
 		}
 	}
 }

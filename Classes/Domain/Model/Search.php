@@ -1,5 +1,5 @@
 <?php
-namespace Lightwerk\L10nTranslator\Domain\Model;
+namespace B13\L10nTranslator\Domain\Model;
 
 /*
  * This file is part of TYPO3 CMS-based extension l10n_translator by b13.
@@ -19,12 +19,12 @@ class Search
      * @var string
      */
     protected $searchString = '';
-    
+
     /**
      * @var string
      */
     protected $language = '';
-    
+
     /**
      * @var string
      */
@@ -66,7 +66,7 @@ class Search
      * @param bool $includeKey
      * @param bool $onlyOneTimeExactSearch
      */
-    public function __construct($searchString = '', $language = '', $l10nFile = '', $caseSensitive = false, $exactMatch = false, $includeSource = true, $includeKey = true, $onlyOneTimeExactSearch = false)
+    public function __construct(string $searchString = '', string $language = '', string $l10nFile = '', bool $caseSensitive = false, bool $exactMatch = false, bool $includeSource = true, bool $includeKey = true, bool $onlyOneTimeExactSearch = false)
     {
         $this->searchString = $searchString;
         $this->language = $language;
@@ -81,90 +81,66 @@ class Search
     /**
      * @return string $searchString
      */
-    public function getSearchString()
+    public function getSearchString(): string
     {
         return $this->searchString;
     }
 
-    
     /**
      * @return string $language
      */
-    public function getLanguage()
+    public function getLanguage(): string
     {
         return $this->language;
     }
 
-    
     /**
      * @return string $l10nFile
      */
-    public function getL10nFile()
+    public function getL10nFile(): string
     {
         return $this->l10nFile;
     }
 
-    /**
-     * @return boolean
-     */
-    public function getCaseSensitive()
+    public function getCaseSensitive(): bool
     {
         return $this->caseSensitive;
     }
 
-    /**
-     * @return boolean
-     */
-    public function getExactMatch()
+    public function getExactMatch(): bool
     {
         return $this->exactMatch;
     }
 
-    /**
-     * @return boolean
-     */
-    public function getIncludeSource()
+    public function getIncludeSource(): bool
     {
         return $this->includeSource;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasLanguage()
+    public function hasLanguage(): bool
     {
         return $this->language !== '';
     }
 
-    /**
-     * @return bool
-     */
-    public function hasL10nFile()
+    public function hasL10nFile(): bool
     {
         return $this->l10nFile !== '';
     }
 
-    /**
-     * @return bool
-     */
-    public function hasSearchString()
+    public function hasSearchString(): bool
     {
         return $this->searchString !== '';
     }
 
-    /**
-     * @return bool
-     */
-    public function getIncludeKey()
+    public function getIncludeKey(): bool
     {
         return $this->includeKey;
     }
 
     /**
      * for searching from table row and don't set the checkbox for exact match
-     * @return bool
      */
-    public function checkIfIgnoreExactMatchInView()
+    public function checkIfIgnoreExactMatchInView(): bool
     {
         if ($this->onlyOneTimeExactSearch) {
             $this->exactMatch = false;
@@ -172,5 +148,4 @@ class Search
         }
         return false;
     }
-
 }

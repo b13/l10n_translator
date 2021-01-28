@@ -1,6 +1,8 @@
 <?php
-namespace Lightwerk\L10nTranslator\Domain\Factory;
+namespace B13\L10nTranslator\Domain\Factory;
 
+use B13\L10nTranslator\Configuration\L10nConfiguration;
+use TYPO3\CMS\Core\Localization\LocalizationFactory;
 /*
  * This file is part of TYPO3 CMS-based extension l10n_translator by b13.
  *
@@ -8,8 +10,8 @@ namespace Lightwerk\L10nTranslator\Domain\Factory;
  * the terms of the GNU General Public License, either version 2
  * of the License, or any later version.
  */
-use Lightwerk\L10nTranslator\Domain\Model\Search;
-use Lightwerk\L10nTranslator\Domain\Model\TranslationFile;
+use B13\L10nTranslator\Domain\Model\Search;
+use B13\L10nTranslator\Domain\Model\TranslationFile;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\SingletonInterface;
 
@@ -20,7 +22,7 @@ use TYPO3\CMS\Core\SingletonInterface;
 class TranslationFileFactory implements SingletonInterface
 {
     /**
-     * @var \Lightwerk\L10nTranslator\Configuration\L10nConfiguration
+     * @var \B13\L10nTranslator\Configuration\L10nConfiguration
      */
     protected $l10nConfiguration;
 
@@ -30,29 +32,26 @@ class TranslationFileFactory implements SingletonInterface
     protected $localizationFactory;
 
     /**
-     * @param \Lightwerk\L10nTranslator\Configuration\L10nConfiguration $l10nConfiguration
-     * @return void
+     * @param \B13\L10nTranslator\Configuration\L10nConfiguration $l10nConfiguration
      */
-    public function injectL10nConfiguration(\Lightwerk\L10nTranslator\Configuration\L10nConfiguration $l10nConfiguration)
+    public function injectL10nConfiguration(L10nConfiguration $l10nConfiguration): void
     {
         $this->l10nConfiguration = $l10nConfiguration;
     }
 
     /**
      * @param \TYPO3\CMS\Core\Localization\LocalizationFactory $localizationFactory
-     * @return void
      */
-    public function injectLocalizationFactory(\TYPO3\CMS\Core\Localization\LocalizationFactory $localizationFactory)
+    public function injectLocalizationFactory(LocalizationFactory $localizationFactory): void
     {
         $this->localizationFactory = $localizationFactory;
     }
-    
+
     /**
      * @param string $relativePath
-     * @return TranslationFile
      * @throws Exception
      */
-    public function findByRelativePath($relativePath)
+    public function findByRelativePath(string $relativePath): TranslationFile
     {
         $splFileInfo = new \SplFileInfo(Environment::getExtensionsPath() . DIRECTORY_SEPARATOR . $relativePath);
         if ($splFileInfo->isFile() === false) {
@@ -65,10 +64,9 @@ class TranslationFileFactory implements SingletonInterface
 
     /**
      * @param string $path
-     * @return TranslationFile
      * @throws Exception
      */
-    public function findByPath($path)
+    public function findByPath(string $path): TranslationFile
     {
         try {
             $translationFile = $this->findByRelativePath($path);
@@ -83,13 +81,12 @@ class TranslationFileFactory implements SingletonInterface
         return $translationFile;
     }
 
-
     /**
      * @param Search $search
      * @return TranslationFile[]
-     * @throws \Lightwerk\L10nTranslator\Domain\Model\Exception
+     * @throws \B13\L10nTranslator\Domain\Model\Exception
      */
-    public function findBySearch(Search $search)
+    public function findBySearch(Search $search): array
     {
         $translationFiles = [];
         $languages = $search->hasLanguage() ? [$search->getLanguage()] : $this->l10nConfiguration->getAvailableL10nLanguages();

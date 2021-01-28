@@ -1,6 +1,7 @@
 <?php
-namespace Lightwerk\L10nTranslator\Domain\Service;
+namespace B13\L10nTranslator\Domain\Service;
 
+use B13\L10nTranslator\Configuration\L10nConfiguration;
 /*
  * This file is part of TYPO3 CMS-based extension l10n_translator by b13.
  *
@@ -9,11 +10,11 @@ namespace Lightwerk\L10nTranslator\Domain\Service;
  * of the License, or any later version.
  */
 
-use Lightwerk\L10nTranslator\Domain\Model\Search;
-use Lightwerk\L10nTranslator\Domain\Model\Translation;
-use Lightwerk\L10nTranslator\Domain\Model\TranslationFile;
+use B13\L10nTranslator\Domain\Factory\TranslationFileFactory;
+use B13\L10nTranslator\Domain\Model\L10nTranslationFile;
+use B13\L10nTranslator\Domain\Model\Search;
+use B13\L10nTranslator\Domain\Model\Translation;
 use TYPO3\CMS\Core\SingletonInterface;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * @package TYPO3
@@ -22,81 +23,40 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class TranslationFileService implements SingletonInterface
 {
     /**
-     * @var \Lightwerk\L10nTranslator\Domain\Factory\TranslationFileFactory
+     * @var TranslationFileFactory
      */
     protected $translationFileFactory;
 
     /**
-     * @var \Lightwerk\L10nTranslator\Domain\Service\TranslationFileWriterService
+     * @var TranslationFileWriterService
      */
     protected $translationFileWriterService;
 
     /**
-     * @var \Lightwerk\L10nTranslator\Configuration\L10nConfiguration
+     * @var \B13\L10nTranslator\Configuration\L10nConfiguration
      */
     protected $l10nConfiguration;
 
-    /**
-     * @param \Lightwerk\L10nTranslator\Configuration\L10nConfiguration $l10nConfiguration
-     * @return void
-     */
-    public function injectL10nConfiguration(\Lightwerk\L10nTranslator\Configuration\L10nConfiguration $l10nConfiguration)
+    public function injectL10nConfiguration(L10nConfiguration $l10nConfiguration): void
     {
         $this->l10nConfiguration = $l10nConfiguration;
     }
 
-    /**
-     * @param \Lightwerk\L10nTranslator\Domain\Factory\TranslationFileFactory $translationFileFactory
-     * @return void
-     */
-    public function injectTranslationFileFactory(\Lightwerk\L10nTranslator\Domain\Factory\TranslationFileFactory $translationFileFactory)
+    public function injectTranslationFileFactory(TranslationFileFactory $translationFileFactory): void
     {
         $this->translationFileFactory = $translationFileFactory;
     }
 
-    /**
-     * @param TranslationFileWriterService $translationFileWriterService
-     * @return void
-     */
-    public function injectTranslationFileWriterService(\Lightwerk\L10nTranslator\Domain\Service\TranslationFileWriterService $translationFileWriterService)
+    public function injectTranslationFileWriterService(TranslationFileWriterService $translationFileWriterService): void
     {
         $this->translationFileWriterService = $translationFileWriterService;
     }
 
     /**
-     * @param string $xlfFile
-     * @param string $language
-     * @param boolean $createEmptyLabels
-     * @return void
-     */
-    public function xml2XlfByDefaultXlf($xlfFile, $language, $createEmptyLabels = true)
-    {
-        $translationFile = $this->translationFileFactory->findByPath($xlfFile);
-        $this->mergeXmlIntoDefault($translationFile, $language, $createEmptyLabels);
-    }
-
-    /**
-     * @param string $xlfFile
-     * @param boolean $createEmptyLabels
-     * @throws \Lightwerk\L10nTranslator\Domain\Factory\Exception
-     * @throws Exception
-     * @return void
-     */
-    public function allXml2XlfByDefaultXlf($xlfFile, $createEmptyLabels = true)
-    {
-        $translationFile = $this->translationFileFactory->findByPath($xlfFile);
-        $languages = $this->l10nConfiguration->getAvailableL10nLanguages();
-        foreach ($languages as $language) {
-            $this->mergeXmlIntoDefault($translationFile, $language, $createEmptyLabels);
-        }
-    }
-
-    /**
      * @param string $language
      * @param bool $copyLabels
-     * @return void
      */
-    public function createMissingFiles($language, $copyLabels = true)
+    public function createMissingFiles(string $language, bool $copyLabels = true): void
     {
         $search = new Search('', '', '');
         $translationFiles = $this->translationFileFactory->findBySearch($search);
@@ -121,9 +81,8 @@ class TranslationFileService implements SingletonInterface
      * @param string $l10nFile
      * @param string $language
      * @param string $sourceLanguage
-     * @return void
      */
-    public function overwriteWithLanguage($l10nFile, $language, $sourceLanguage)
+    public function overwriteWithLanguage(string $l10nFile, string $language, string $sourceLanguage): void
     {
         $translationFile = $this->translationFileFactory->findByPath($l10nFile);
         $l10nTranslationFile = $translationFile->getL10nTranslationFile($language);
@@ -142,9 +101,8 @@ class TranslationFileService implements SingletonInterface
      * @param string $l10nFile
      * @param string $language
      * @param string $sourceLanguage
-     * @return void
      */
-    public function createMissingLabels($l10nFile, $language, $sourceLanguage = 'default')
+    public function createMissingLabels(string $l10nFile, string $language, string $sourceLanguage = 'default'): void
     {
         if ($sourceLanguage !== 'default') {
             $l10nTranslationFile = $this->mergeMissingLabelsFromSourceLanguage($l10nFile, $language, $sourceLanguage);
@@ -154,12 +112,7 @@ class TranslationFileService implements SingletonInterface
         $this->translationFileWriterService->writeTranslation($l10nTranslationFile);
     }
 
-    /**
-     * @param string $l10nFile
-     * @param string $language
-     * @param string $sourceLanguage
-     */
-    public function createMissingSourceTags($l10nFile, $language, $sourceLanguage = 'default')
+    public function createMissingSourceTags(string $l10nFile, string $language, string $sourceLanguage = 'default'): void
     {
         $l10nTranslationFile = $this->mergeSourceTagFromDefaultLanguage($l10nFile, $language);
         $this->translationFileWriterService->writeTranslation($l10nTranslationFile);
@@ -168,9 +121,8 @@ class TranslationFileService implements SingletonInterface
     /**
      * @param string $language
      * @param string $sourceLanguage
-     * @return void
      */
-    public function createAllMissingLabels($language, $sourceLanguage = 'default')
+    public function createAllMissingLabels(string $language, string $sourceLanguage = 'default'): void
     {
         $l10nFiles = $this->l10nConfiguration->getAvailableL10nFiles();
         foreach ($l10nFiles as $l10nFile) {
@@ -180,9 +132,8 @@ class TranslationFileService implements SingletonInterface
 
     /**
      * @param string $language
-     * @return void
      */
-    public function createSourceTagsForAllFiles($language)
+    public function createSourceTagsForAllFiles(string $language): void
     {
         $l10nFiles = $this->l10nConfiguration->getAvailableL10nFiles();
         foreach ($l10nFiles as $l10nFile) {
@@ -190,11 +141,7 @@ class TranslationFileService implements SingletonInterface
         }
     }
 
-    /**
-     * @param string $language
-     * @return void
-     */
-    public function createSourceTagsForAllFilesAndLanguages()
+    public function createSourceTagsForAllFilesAndLanguages(): void
     {
         $languages = $this->l10nConfiguration->getAvailableL10nLanguages();
         foreach ($languages as $language) {
@@ -206,9 +153,9 @@ class TranslationFileService implements SingletonInterface
      * @param string $l10nFile
      * @param string $language
      * @param string $sourceLanguage
-     * @return \Lightwerk\L10nTranslator\Domain\Model\L10nTranslationFile
+     * @return L10nTranslationFile
      */
-    protected function mergeMissingLabelsFromSourceLanguage($l10nFile, $language, $sourceLanguage)
+    protected function mergeMissingLabelsFromSourceLanguage(string $l10nFile, string $language, string $sourceLanguage): L10nTranslationFile
     {
         $translationFile = $this->translationFileFactory->findByPath($l10nFile);
         $l10nTranslationFile = $translationFile->getL10nTranslationFile($language);
@@ -229,9 +176,9 @@ class TranslationFileService implements SingletonInterface
     /**
      * @param string $l10nFile
      * @param string $language
-     * @return \Lightwerk\L10nTranslator\Domain\Model\L10nTranslationFile
+     * @return L10nTranslationFile
      */
-    protected function mergeMissingLabelsFromDefaultLanguage($l10nFile, $language)
+    protected function mergeMissingLabelsFromDefaultLanguage(string $l10nFile, string $language): L10nTranslationFile
     {
         $translationFile = $this->translationFileFactory->findByPath($l10nFile);
         $l10nTranslationFile = $translationFile->getL10nTranslationFile($language);
@@ -250,9 +197,9 @@ class TranslationFileService implements SingletonInterface
     /**
      * @param string $l10nFile
      * @param string $language
-     * @return \Lightwerk\L10nTranslator\Domain\Model\L10nTranslationFile
+     * @return L10nTranslationFile
      */
-    protected function mergeSourceTagFromDefaultLanguage($l10nFile, $language)
+    protected function mergeSourceTagFromDefaultLanguage(string $l10nFile, string $language): L10nTranslationFile
     {
         $translationFile = $this->translationFileFactory->findByPath($l10nFile);
         $l10nTranslationFile = $translationFile->getL10nTranslationFile($language);
@@ -265,84 +212,6 @@ class TranslationFileService implements SingletonInterface
     }
 
     /**
-     * @param TranslationFile $translationFile
-     * @param string $language
-     * @param boolean $createEmptyLabels
-     * @return void
-     */
-    protected function mergeXmlIntoDefault(TranslationFile $translationFile, $language, $createEmptyLabels)
-    {
-        $l10nTranslationFile = $translationFile->getL10nTranslationFile($language);
-        $translations = $translationFile->getTranslations();
-        foreach ($translations as $translation) {
-            if ($createEmptyLabels === true && $l10nTranslationFile->getOwnTranslation($translation) === null) {
-                $l10nTranslationFile->addTranslation($translation);
-            }
-            $l10nTranslationFile->replaceTranslationSource($translation);
-        }
-        $this->translationFileWriterService->writeTranslationXlf($l10nTranslationFile);
-    }
-
-    /**
-     * @param string $xmlFile
-     * @param string $language
-     * @return void
-     */
-    public function xml2Xlf($xmlFile, $language)
-    {
-        $translationFile = $this->translationFileFactory->findByRelativePath($xmlFile);
-        if ($language !== 'default') {
-            $this->translationFileWriterService->writeTranslationXlf($translationFile->getL10nTranslationFile($language));
-        } else {
-            $this->translationFileWriterService->writeTranslationXlf($translationFile);
-        }
-    }
-
-    /**
-     * @param string $xmlFile
-     * @return void
-     */
-    public function allXml2Xlf($xmlFile)
-    {
-        $translationFile = $this->translationFileFactory->findByRelativePath($xmlFile);
-        $this->translationFileWriterService->writeTranslationXlf($translationFile);
-        $languages = $this->l10nConfiguration->getAvailableL10nLanguages();
-        foreach ($languages as $language) {
-            $this->translationFileWriterService->writeTranslationXlf($translationFile->getL10nTranslationFile($language));
-        }
-    }
-
-    /**
-     * @param string $xmlFile
-     * @return void
-     * @throws Exception
-     */
-    public function prepareXmlLanguageFiles($xmlFile)
-    {
-        $translationFile = $this->translationFileFactory->findByRelativePath($xmlFile);
-        $xmlPath = $translationFile->getCleanPath();
-        $languages = $this->l10nConfiguration->getAvailableL10nLanguages();
-        foreach ($languages as $language) {
-            $l10nTranslationFile = $translationFile->getL10nTranslationFile($language);
-            $splFileInfo = $l10nTranslationFile->getSplFileInfo();
-            if ($splFileInfo->isFile() === true) {
-                throw new Exception('l10n language file already exists ' . $splFileInfo->getPathname(), 1476776271);
-            }
-            $parent = $splFileInfo->getPathInfo();
-            if ($parent->isDir() === false) {
-                if (@mkdir($parent->getPathname(), 0777, true) === false) {
-                    throw new Exception('cannot create directory ' . $parent->getPathname(), 1476776272);
-                }
-                GeneralUtility::fixPermissions($parent->getPathname());
-            }
-            if (@copy($xmlPath, $splFileInfo->getPathname()) === false) {
-                throw new Exception('cannot copy ' . $xmlPath . ' to ' . $splFileInfo->getPathname(), 1476776273);
-            }
-            GeneralUtility::fixPermissions($splFileInfo->getPathname());
-        }
-    }
-
-    /**
      * For all configured languages we update the source of the label from the POST request.
      * This is because it was changed in the default language which is the source of all
      * other languages.
@@ -351,7 +220,7 @@ class TranslationFileService implements SingletonInterface
      *
      * @param array $postParam
      */
-    public function updateSourceInFiles(array $postParam)
+    public function updateSourceInFiles(array $postParam): void
     {
         $configuredLanguages = $this->l10nConfiguration->getAvailableL10nLanguages();
         $translationFile = $this->translationFileFactory->findByPath($postParam['path']);

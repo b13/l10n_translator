@@ -1,5 +1,5 @@
 <?php
-namespace Lightwerk\L10nTranslator\Tests\Unit\Utility;
+namespace B13\L10nTranslator\Tests\Unit\Utility;
 
 /*
  * This file is part of the TYPO3 CMS project.
@@ -13,11 +13,11 @@ namespace Lightwerk\L10nTranslator\Tests\Unit\Utility;
  *
  * The TYPO3 project - inspiring people to share!
  */
-use Lightwerk\L10nTranslator\Utility\StringUtility;
+use B13\L10nTranslator\Utility\StringUtility;
 use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
 /**
- * Testcase for class \Lightwerk\L10nTranslator\StringUtility
+ * Testcase for class \B13\L10nTranslator\StringUtility
  *
  * @package TYPO3
  * @subpackage l10n_translator

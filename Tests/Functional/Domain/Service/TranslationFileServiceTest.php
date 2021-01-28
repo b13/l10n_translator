@@ -1,10 +1,10 @@
 <?php
 
-namespace Lightwerk\L10nTranslator\Tests\Functional\Domain\Service;
+namespace B13\L10nTranslator\Tests\Functional\Domain\Service;
 
 /***************************************************************
  *  Copyright notice
- *  (c) 2016 Achim Fritz <af@lightwerk.com>
+ *  (c) 2016 Achim Fritz <af@b13.com>
  *  All rights reserved
  *  This script is part of the TYPO3 project. The TYPO3 project is
  *  free software; you can redistribute it and/or modify
@@ -20,7 +20,7 @@ namespace Lightwerk\L10nTranslator\Tests\Functional\Domain\Service;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use Lightwerk\L10nTranslator\Domain\Service\TranslationFileService;
+use B13\L10nTranslator\Domain\Service\TranslationFileService;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
@@ -33,7 +33,7 @@ use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 class TranslationFileServiceTest extends FunctionalTestCase
 {
     /**
-     * @var \Lightwerk\L10nTranslator\Domain\Service\TranslationFileService
+     * @var \B13\L10nTranslator\Domain\Service\TranslationFileService
      */
     protected $translationFileService;
 

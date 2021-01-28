@@ -1,5 +1,5 @@
 <?php
-namespace Lightwerk\L10nTranslator\Localization\Parser;
+namespace B13\L10nTranslator\Localization\Parser;
 
 /*
  * This file is part of TYPO3 CMS-based extension l10n_translator by b13.
@@ -9,9 +9,8 @@ namespace Lightwerk\L10nTranslator\Localization\Parser;
  * of the License, or any later version.
  */
 
-use Lightwerk\L10nTranslator\Configuration\L10nConfiguration;
+use B13\L10nTranslator\Configuration\L10nConfiguration;
 use TYPO3\CMS\Core\Core\Environment;
-use TYPO3\CMS\Core\Localization\Exception\FileNotFoundException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -23,16 +22,14 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class XliffParser extends \TYPO3\CMS\Core\Localization\Parser\XliffParser
 {
-
     /**
      * Returns parsed representation of XML file.
      *
      * @param string $sourcePath Source file path
      * @param string $languageKey Language key
-     * @return array
      * @throws \TYPO3\CMS\Core\Localization\Exception\FileNotFoundException
      */
-    public function getParsedData($sourcePath, $languageKey)
+    public function getParsedData($sourcePath, $languageKey): array
     {
         if (Environment::isCli()) {
             return parent::getParsedData($sourcePath, $languageKey);

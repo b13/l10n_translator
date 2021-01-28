@@ -1,6 +1,6 @@
 <?php
 
-namespace Lightwerk\L10nTranslator\Utility;
+namespace B13\L10nTranslator\Utility;
 
 /*
  * This file is part of TYPO3 CMS-based extension l10n_translator by b13.
@@ -15,13 +15,12 @@ use TYPO3\CMS\Core\SingletonInterface;
 /**
  * Class StringUtility
  *
- * @author Daniel Goerz <dlg@lightwerk.com>
+ * @author Daniel Goerz <dlg@b13.com>
  * @package TYPO3
  * @subpackage l10n_translator
  */
 class StringUtility implements SingletonInterface
 {
-
     /**
      * Strips the path to a language file off the string and appends the
      * filename into parentheses.
@@ -30,9 +29,8 @@ class StringUtility implements SingletonInterface
      * news/Resources/Private/Language/locallang.xlf => news (locallang.xlf)
      *
      * @param string $fullPath
-     * @return string
      */
-    public function stripPathToLanguageFile($fullPath)
+    public function stripPathToLanguageFile(string $fullPath): string
     {
         $pathsToStrip = [
             '/Resources/Private/Language/',

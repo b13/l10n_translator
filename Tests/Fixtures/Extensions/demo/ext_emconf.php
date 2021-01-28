@@ -3,10 +3,10 @@
 $EM_CONF[$_EXTKEY] = [
     'title' => 'demo',
     'description' => 'l10n functional tests',
-    'category' => 'Lightwerk',
+    'category' => 'B13',
     'author' => 'Achim Fritz',
-    'author_email' => 'af@lightwerk.com',
-    'author_company' => 'Lightwerk GmbH',
+    'author_email' => 'af@b13.com',
+    'author_company' => 'B13 GmbH',
     'shy' => '',
     'dependencies' => '',
     'conflicts' => '',

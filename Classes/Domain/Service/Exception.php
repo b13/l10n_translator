@@ -1,5 +1,5 @@
 <?php
-namespace Lightwerk\L10nTranslator\Domain\Service;
+namespace B13\L10nTranslator\Domain\Service;
 
 /*
  * This file is part of TYPO3 CMS-based extension l10n_translator by b13.
@@ -13,7 +13,6 @@ namespace Lightwerk\L10nTranslator\Domain\Service;
  * @package TYPO3
  * @subpackage l10n_translator
  */
-class Exception extends \Lightwerk\L10nTranslator\Exception
+class Exception extends \B13\L10nTranslator\Exception
 {
-
 }

@@ -1,5 +1,5 @@
 <?php
-namespace Lightwerk\L10nTranslator\Configuration;
+namespace B13\L10nTranslator\Configuration;
 
 /*
  * This file is part of TYPO3 CMS-based extension l10n_translator by b13.
@@ -19,7 +19,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class L10nConfiguration implements SingletonInterface
 {
-
     /**
      * @var array
      */

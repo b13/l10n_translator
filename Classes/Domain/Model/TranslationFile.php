@@ -1,5 +1,5 @@
 <?php
-namespace Lightwerk\L10nTranslator\Domain\Model;
+namespace B13\L10nTranslator\Domain\Model;
 
 /*
  * This file is part of TYPO3 CMS-based extension l10n_translator by b13.
@@ -18,7 +18,6 @@ use TYPO3\CMS\Core\Localization\LocalizationFactory;
  */
 class TranslationFile extends AbstractTranslationFile
 {
-
     /**
      * @var L10nTranslationFile[]
      */
@@ -28,17 +27,16 @@ class TranslationFile extends AbstractTranslationFile
      * @param \SplFileInfo $splFileInfo
      * @param array $languages
      * @param LocalizationFactory $localizationFactory
-     * @return void
      * @throws Exception
      */
-    public function initFileSystem(\SplFileInfo $splFileInfo, array $languages, LocalizationFactory $localizationFactory)
+    public function initFileSystem(\SplFileInfo $splFileInfo, array $languages, LocalizationFactory $localizationFactory): void
     {
         $this->splFileInfo = $splFileInfo;
 
         $pathPart = str_replace('/', '\/', Environment::getExtensionsPath() . DIRECTORY_SEPARATOR);
         $this->relativePath = preg_replace('/' . $pathPart . '/', '', $this->getCleanPath());
         $parts = explode(DIRECTORY_SEPARATOR, $this->relativePath);
-        if (count($parts) < 1) {
+        if (empty($parts)) {
             throw new Exception('Invalid file in ' . $this->splFileInfo->getRealPath(), 1466171558);
         }
         $this->language = 'default';
@@ -58,17 +56,16 @@ class TranslationFile extends AbstractTranslationFile
      * @param LocalizationFactory $localizationFactory
      * @return array
      */
-    protected function getParsedData(LocalizationFactory $localizationFactory)
+    protected function getParsedData(LocalizationFactory $localizationFactory): array
     {
         return $localizationFactory->getParsedData($this->getCleanPath(), $this->getLanguage());
     }
 
     /**
      * @param string $language
-     * @return L10nTranslationFile
      * @throws Exception
      */
-    public function getL10nTranslationFile($language)
+    public function getL10nTranslationFile(string $language): L10nTranslationFile
     {
         if (isset($this->l10nTranslationFiles[$language]) === false) {
             throw new Exception('l10nTranslationFile of language ' . $language . ' does not exist.', 1466587863);
@@ -78,9 +75,8 @@ class TranslationFile extends AbstractTranslationFile
 
     /**
      * @param string $language
-     * @return string
      */
-    public function getL10nTranslationFilePath($language)
+    public function getL10nTranslationFilePath(string $language): string
     {
         $parts = explode(DIRECTORY_SEPARATOR, $this->getRelativePath());
         array_pop($parts);
@@ -91,9 +87,8 @@ class TranslationFile extends AbstractTranslationFile
 
     /**
      * @param Search $search
-     * @return void
      */
-    public function applySearch(Search $search)
+    public function applySearch(Search $search): void
     {
         foreach ($this->getL10nTranslationFiles() as $l10nTranslationFile) {
             $l10nTranslationFile->applySearch($search);
@@ -103,7 +98,7 @@ class TranslationFile extends AbstractTranslationFile
     /**
      * @return L10nTranslationFile[]
      */
-    public function getL10nTranslationFiles()
+    public function getL10nTranslationFiles(): array
     {
         return $this->l10nTranslationFiles;
     }

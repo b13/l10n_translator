@@ -1,5 +1,5 @@
 <?php
-namespace Lightwerk\L10nTranslator\Domain\Service;
+namespace B13\L10nTranslator\Domain\Service;
 
 /*
  * This file is part of TYPO3 CMS-based extension l10n_translator by b13.
@@ -9,7 +9,7 @@ namespace Lightwerk\L10nTranslator\Domain\Service;
  * of the License, or any later version.
  */
 
-use Lightwerk\L10nTranslator\Domain\Model\AbstractTranslationFile;
+use B13\L10nTranslator\Domain\Model\AbstractTranslationFile;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\SingletonInterface;
 
@@ -19,13 +19,11 @@ use TYPO3\CMS\Core\SingletonInterface;
  */
 class TranslationFileWriterService implements SingletonInterface
 {
-
     /**
      * @param AbstractTranslationFile $translationFile
-     * @return void
      * @throws Exception
      */
-    public function writeTranslation(AbstractTranslationFile $translationFile)
+    public function writeTranslation(AbstractTranslationFile $translationFile): void
     {
         if ($translationFile->getSplFileInfo()->getExtension() === 'xlf') {
             $this->writeTranslationXlf($translationFile);
@@ -38,10 +36,9 @@ class TranslationFileWriterService implements SingletonInterface
 
     /**
      * @param AbstractTranslationFile $translationFile
-     * @return void
      * @throws Exception
      */
-    public function writeTranslationXlf(AbstractTranslationFile $translationFile)
+    public function writeTranslationXlf(AbstractTranslationFile $translationFile): void
     {
         $xmlFile = [];
         $language = $translationFile->getLanguage();
@@ -89,10 +86,9 @@ class TranslationFileWriterService implements SingletonInterface
 
     /**
      * @param AbstractTranslationFile $translationFile
-     * @return void
      * @throws Exception
      */
-    public function writeTranslationXml(AbstractTranslationFile $translationFile)
+    public function writeTranslationXml(AbstractTranslationFile $translationFile): void
     {
         $xmlFile = [];
         $xmlFile[] = '<?xml version="1.0" encoding="utf-8" standalone="yes" ?>';
@@ -117,10 +113,9 @@ class TranslationFileWriterService implements SingletonInterface
     /**
      * @param string $xml
      * @param AbstractTranslationFile $translationFile
-     * @return void
-     * @throws \Lightwerk\L10nTranslator\Domain\Service\Exception
+     * @throws \B13\L10nTranslator\Domain\Service\Exception
      */
-    protected function assureValidXml($xml, AbstractTranslationFile $translationFile)
+    protected function assureValidXml(string $xml, AbstractTranslationFile $translationFile): void
     {
         try {
             $xmlObject = new \SimpleXMLElement($xml);

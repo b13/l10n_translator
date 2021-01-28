@@ -1,5 +1,5 @@
 <?php
-namespace Lightwerk\L10nTranslator\Domain\Model;
+namespace B13\L10nTranslator\Domain\Model;
 
 /*
  * This file is part of TYPO3 CMS-based extension l10n_translator by b13.
@@ -18,8 +18,6 @@ use TYPO3\CMS\Core\Localization\LocalizationFactory;
  */
 class L10nTranslationFile extends AbstractTranslationFile
 {
-
-
     /**
      * @var TranslationFile
      */
@@ -47,10 +45,9 @@ class L10nTranslationFile extends AbstractTranslationFile
     /**
      * @param \SplFileInfo $splFileInfo
      * @param LocalizationFactory $localizationFactory
-     * @return void
      * @throws Exception
      */
-    public function initFileSystem(\SplFileInfo $splFileInfo, LocalizationFactory $localizationFactory)
+    public function initFileSystem(\SplFileInfo $splFileInfo, LocalizationFactory $localizationFactory): void
     {
         $this->splFileInfo = $splFileInfo;
         $pathPart = str_replace('/', '\/', Environment::getLabelsPath() . DIRECTORY_SEPARATOR);
@@ -68,7 +65,7 @@ class L10nTranslationFile extends AbstractTranslationFile
      * @param LocalizationFactory $localizationFactory
      * @return array
      */
-    protected function getParsedData(LocalizationFactory $localizationFactory)
+    protected function getParsedData(LocalizationFactory $localizationFactory): array
     {
         if ($this->getSplFileInfo()->isFile() === true) {
             return $localizationFactory->getParsedData($this->getCleanPath(), $this->getLanguage());
@@ -76,14 +73,11 @@ class L10nTranslationFile extends AbstractTranslationFile
         return $localizationFactory->getParsedData($this->getTranslationFile()->getCleanPath(), $this->getLanguage());
     }
 
-    /**
-     * @return void
-     */
-    public function initMissingTranslations()
+    public function initMissingTranslations(): void
     {
         foreach ($this->translationFile->getTranslations() as $translation) {
             if ($this->hasOwnTranslation($translation) === false) {
-                $this->missingTranslations[] = new Translation($translation->getPath(), $translation->getTranslationKey() , '', $translation->getTranslationSource());
+                $this->missingTranslations[] = new Translation($translation->getPath(), $translation->getTranslationKey(), '', $translation->getTranslationSource());
             }
         }
     }
@@ -91,7 +85,7 @@ class L10nTranslationFile extends AbstractTranslationFile
     /**
      * @return Translation[]
      */
-    public function getMissingTranslations()
+    public function getMissingTranslations(): array
     {
         return $this->missingTranslations;
     }
@@ -99,17 +93,15 @@ class L10nTranslationFile extends AbstractTranslationFile
     /**
      * @return Translation[]
      */
-    public function getMatchedMissingTranslations()
+    public function getMatchedMissingTranslations(): array
     {
         return $this->matchedMissingTranslations;
     }
 
-
     /**
      * @param Search $search
-     * @return void
      */
-    public function applySearch(Search $search)
+    public function applySearch(Search $search): void
     {
         if ($search->hasSearchString() === true) {
             $this->matchedTranslations = $this->getTranslationsBySearch($search);
@@ -123,7 +115,7 @@ class L10nTranslationFile extends AbstractTranslationFile
      * @param Search $search
      * @return Translation[]
      */
-    protected function getMissingTranslationsBySearch($search)
+    protected function getMissingTranslationsBySearch(\B13\L10nTranslator\Domain\Model\Search $search): array
     {
         $filtered = [];
         if ($search->getIncludeSource() === true) {
@@ -139,21 +131,17 @@ class L10nTranslationFile extends AbstractTranslationFile
         }
         return $filtered;
     }
-    
-    /**
-     * @return TranslationFile
-     */
-    public function getTranslationFile()
+
+    public function getTranslationFile(): \B13\L10nTranslator\Domain\Model\TranslationFile
     {
         return $this->translationFile;
     }
 
     /**
      * @param Translation $translation
-     * @return void
      * @throws Exception
      */
-    public function upsertTranslationTarget(Translation $translation)
+    public function upsertTranslationTarget(Translation $translation): void
     {
         if ($this->hasOwnTranslation($translation) === true) {
             $this->replaceTranslationTarget($translation);
