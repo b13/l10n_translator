@@ -1,0 +1,38 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  B13\L10nTranslator\:
+    resource: '../Classes/*'
+
+  B13\L10nTranslator\Command\ListCommand:
+    tags:
+      - name: 'console.command'
+        command: 'l10nTranslator:list'
+        schedulable: false
+
+  B13\L10nTranslator\Command\CreateMissingFilesCommand:
+    tags:
+      - name: 'console.command'
+        command: 'l10nTranslator:create:missingFiles'
+        schedulable: false
+
+  B13\L10nTranslator\Command\ListIntegrityCommand:
+    tags:
+      - name: 'console.command'
+        command: 'l10nTranslator:integrity:list'
+        schedulable: false
+
+  B13\L10nTranslator\Command\ShowIntegrityCommand:
+    tags:
+      - name: 'console.command'
+        command: 'l10nTranslator:integrity:show'
+        schedulable: false
+
+  B13\L10nTranslator\Command\CreateMissingLabelsCommand:
+    tags:
+      - name: 'console.command'
+        command: 'l10nTranslator:create:missingLabels'
+        schedulable: false

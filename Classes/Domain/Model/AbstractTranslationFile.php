@@ -1,30 +1,13 @@
 <?php
-namespace Lightwerk\L10nTranslator\Domain\Model;
+namespace B13\L10nTranslator\Domain\Model;
 
-/***************************************************************
+/*
+ * This file is part of TYPO3 CMS-based extension l10n_translator by b13.
  *
- *  Copyright notice
- *
- *  (c) 2016 Achim Fritz <af@lightwerk.com>, Lightwerk GmbH
- *
- *  All rights reserved
- *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
- *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
+ */
 use TYPO3\CMS\Core\Localization\LocalizationFactory;
 
 /**
@@ -63,19 +46,12 @@ abstract class AbstractTranslationFile
      */
     protected $matchedTranslations = [];
 
-
-    /**
-     * @return string
-     */
-    public function getCleanPath()
+    public function getCleanPath(): string
     {
         return str_replace('//', '/', $this->getSplFileInfo()->getPathname());
     }
 
-    /**
-     * @return array
-     */
-    public function translationsToArray()
+    public function translationsToArray(): array
     {
         $arr = [];
         foreach ($this->getTranslations() as $translation) {
@@ -86,9 +62,8 @@ abstract class AbstractTranslationFile
 
     /**
      * @param LocalizationFactory $localizationFactory
-     * @return void
      */
-    protected function initTranslations(LocalizationFactory $localizationFactory)
+    protected function initTranslations(LocalizationFactory $localizationFactory): void
     {
         $parsedData = $this->getParsedData($localizationFactory);
         foreach ($parsedData[$this->getLanguage()] as $key => $labels) {
@@ -102,15 +77,14 @@ abstract class AbstractTranslationFile
 
     /**
      * @param LocalizationFactory $localizationFactory
-     * @return array
      */
-    abstract protected function getParsedData(LocalizationFactory $localizationFactory);
+    abstract protected function getParsedData(LocalizationFactory $localizationFactory): array;
 
     /**
      * @param Search $search
      * @return Translation[]
      */
-    public function getTranslationsBySearch(Search $search)
+    public function getTranslationsBySearch(Search $search): array
     {
         $filtered = [];
         foreach ($this->getTranslations() as $translation) {
@@ -123,9 +97,8 @@ abstract class AbstractTranslationFile
 
     /**
      * @param Search $search
-     * @return bool
      */
-    public function hasTranslationOfSearch(Search $search)
+    public function hasTranslationOfSearch(Search $search): bool
     {
         foreach ($this->getTranslations() as $translation) {
             if ($translation->matchSearch($search) === true) {
@@ -137,9 +110,8 @@ abstract class AbstractTranslationFile
 
     /**
      * @param Translation $translation
-     * @return void
      */
-    public function replaceTranslationTarget(Translation $translation)
+    public function replaceTranslationTarget(Translation $translation): void
     {
         $replaced = [];
         $currentTranslations = $this->getTranslations();
@@ -154,9 +126,8 @@ abstract class AbstractTranslationFile
 
     /**
      * @param Translation $translation
-     * @return void
      */
-    public function replaceTranslationSource(Translation $translation)
+    public function replaceTranslationSource(Translation $translation): void
     {
         $replaced = [];
         $currentTranslations = $this->getTranslations();
@@ -171,9 +142,8 @@ abstract class AbstractTranslationFile
 
     /**
      * @param Translation $translation
-     * @return Translation|null
      */
-    public function getOwnTranslation(Translation $translation)
+    public function getOwnTranslation(Translation $translation): ?\B13\L10nTranslator\Domain\Model\Translation
     {
         foreach ($this->getTranslations() as $ownTranslation) {
             if ($translation->getTranslationKey() === $ownTranslation->getTranslationKey()) {
@@ -185,43 +155,31 @@ abstract class AbstractTranslationFile
 
     /**
      * @param Translation $translation
-     * @return bool
      */
-    public function hasOwnTranslation(Translation $translation)
+    public function hasOwnTranslation(Translation $translation): bool
     {
         return $this->getOwnTranslation($translation) !== null;
     }
 
     /**
      * @param Translation $translation
-     * @return void
      */
-    public function addTranslation(Translation $translation)
+    public function addTranslation(Translation $translation): void
     {
         $this->translations[] = $translation;
     }
 
-
-    /**
-     * @return \splFileInfo
-     */
-    public function getSplFileInfo()
+    public function getSplFileInfo(): \splFileInfo
     {
         return $this->splFileInfo;
     }
 
-    /**
-     * @return string
-     */
-    public function getLanguage()
+    public function getLanguage(): string
     {
         return $this->language;
     }
 
-    /**
-     * @return string
-     */
-    public function getExtension()
+    public function getExtension(): string
     {
         return $this->extension;
     }
@@ -229,15 +187,12 @@ abstract class AbstractTranslationFile
     /**
      * @return Translation[]
      */
-    public function getTranslations()
+    public function getTranslations(): array
     {
         return $this->translations;
     }
 
-    /**
-     * @return string
-     */
-    public function getRelativePath()
+    public function getRelativePath(): string
     {
         return $this->relativePath;
     }
@@ -245,7 +200,7 @@ abstract class AbstractTranslationFile
     /**
      * @return Translation[]
      */
-    public function getMatchedTranslations()
+    public function getMatchedTranslations(): array
     {
         return $this->matchedTranslations;
     }

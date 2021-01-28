@@ -4,18 +4,16 @@ if (!defined('TYPO3_MODE')) {
 }
 
 \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
-    'Lightwerk.l10n_translator',
+    'L10nTranslator',
     'web',
     'translator',
     '',
-    [
-        'TranslationFile' => 'list'
-    ],
+    [\B13\L10nTranslator\Controller\TranslationFileController::class => 'list'],
     [
         'access' => 'user,group',
         'icon' => 'EXT:l10n_translator/Resources/Public/Icons/Extension.svg',
         'labels' => 'LLL:EXT:l10n_translator/Resources/Private/Language/locallang_translator.xlf',
-        'navigationComponentId' => '',
+        'navigationComponentId' => 'TYPO3/CMS/Backend/PageTree/PageTreeElement',
         'inheritNavigationComponentFromMainModule' => false
     ]
 );

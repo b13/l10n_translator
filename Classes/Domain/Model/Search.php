@@ -1,31 +1,13 @@
 <?php
-namespace Lightwerk\L10nTranslator\Domain\Model;
+namespace B13\L10nTranslator\Domain\Model;
 
-
-/***************************************************************
+/*
+ * This file is part of TYPO3 CMS-based extension l10n_translator by b13.
  *
- *  Copyright notice
- *
- *  (c) 2016 Achim Fritz <af@lightwerk.com>, Lightwerk GmbH
- *
- *  All rights reserved
- *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
- *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
+ */
 
 /**
  * @package TYPO3
@@ -37,12 +19,12 @@ class Search
      * @var string
      */
     protected $searchString = '';
-    
+
     /**
      * @var string
      */
     protected $language = '';
-    
+
     /**
      * @var string
      */
@@ -84,7 +66,7 @@ class Search
      * @param bool $includeKey
      * @param bool $onlyOneTimeExactSearch
      */
-    public function __construct($searchString = '', $language = '', $l10nFile = '', $caseSensitive = false, $exactMatch = false, $includeSource = true, $includeKey = true, $onlyOneTimeExactSearch = false)
+    public function __construct(string $searchString = '', string $language = '', string $l10nFile = '', bool $caseSensitive = false, bool $exactMatch = false, bool $includeSource = true, bool $includeKey = true, bool $onlyOneTimeExactSearch = false)
     {
         $this->searchString = $searchString;
         $this->language = $language;
@@ -99,90 +81,66 @@ class Search
     /**
      * @return string $searchString
      */
-    public function getSearchString()
+    public function getSearchString(): string
     {
         return $this->searchString;
     }
 
-    
     /**
      * @return string $language
      */
-    public function getLanguage()
+    public function getLanguage(): string
     {
         return $this->language;
     }
 
-    
     /**
      * @return string $l10nFile
      */
-    public function getL10nFile()
+    public function getL10nFile(): string
     {
         return $this->l10nFile;
     }
 
-    /**
-     * @return boolean
-     */
-    public function getCaseSensitive()
+    public function getCaseSensitive(): bool
     {
         return $this->caseSensitive;
     }
 
-    /**
-     * @return boolean
-     */
-    public function getExactMatch()
+    public function getExactMatch(): bool
     {
         return $this->exactMatch;
     }
 
-    /**
-     * @return boolean
-     */
-    public function getIncludeSource()
+    public function getIncludeSource(): bool
     {
         return $this->includeSource;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasLanguage()
+    public function hasLanguage(): bool
     {
         return $this->language !== '';
     }
 
-    /**
-     * @return bool
-     */
-    public function hasL10nFile()
+    public function hasL10nFile(): bool
     {
         return $this->l10nFile !== '';
     }
 
-    /**
-     * @return bool
-     */
-    public function hasSearchString()
+    public function hasSearchString(): bool
     {
         return $this->searchString !== '';
     }
 
-    /**
-     * @return bool
-     */
-    public function getIncludeKey()
+    public function getIncludeKey(): bool
     {
         return $this->includeKey;
     }
 
     /**
      * for searching from table row and don't set the checkbox for exact match
-     * @return bool
      */
-    public function checkIfIgnoreExactMatchInView()
+    public function checkIfIgnoreExactMatchInView(): bool
     {
         if ($this->onlyOneTimeExactSearch) {
             $this->exactMatch = false;
@@ -190,5 +148,4 @@ class Search
         }
         return false;
     }
-
 }

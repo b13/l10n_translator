@@ -1,30 +1,13 @@
 <?php
-namespace Lightwerk\L10nTranslator\Domain\Model;
+namespace B13\L10nTranslator\Domain\Model;
 
-/***************************************************************
+/*
+ * This file is part of TYPO3 CMS-based extension l10n_translator by b13.
  *
- *  Copyright notice
- *
- *  (c) 2016 Achim Fritz <af@lightwerk.com>, Lightwerk GmbH
- *
- *  All rights reserved
- *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
- *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
+ */
 
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Localization\LocalizationFactory;
@@ -35,8 +18,6 @@ use TYPO3\CMS\Core\Localization\LocalizationFactory;
  */
 class L10nTranslationFile extends AbstractTranslationFile
 {
-
-
     /**
      * @var TranslationFile
      */
@@ -64,10 +45,9 @@ class L10nTranslationFile extends AbstractTranslationFile
     /**
      * @param \SplFileInfo $splFileInfo
      * @param LocalizationFactory $localizationFactory
-     * @return void
      * @throws Exception
      */
-    public function initFileSystem(\SplFileInfo $splFileInfo, LocalizationFactory $localizationFactory)
+    public function initFileSystem(\SplFileInfo $splFileInfo, LocalizationFactory $localizationFactory): void
     {
         $this->splFileInfo = $splFileInfo;
         $pathPart = str_replace('/', '\/', Environment::getLabelsPath() . DIRECTORY_SEPARATOR);
@@ -85,7 +65,7 @@ class L10nTranslationFile extends AbstractTranslationFile
      * @param LocalizationFactory $localizationFactory
      * @return array
      */
-    protected function getParsedData(LocalizationFactory $localizationFactory)
+    protected function getParsedData(LocalizationFactory $localizationFactory): array
     {
         if ($this->getSplFileInfo()->isFile() === true) {
             return $localizationFactory->getParsedData($this->getCleanPath(), $this->getLanguage());
@@ -93,14 +73,11 @@ class L10nTranslationFile extends AbstractTranslationFile
         return $localizationFactory->getParsedData($this->getTranslationFile()->getCleanPath(), $this->getLanguage());
     }
 
-    /**
-     * @return void
-     */
-    public function initMissingTranslations()
+    public function initMissingTranslations(): void
     {
         foreach ($this->translationFile->getTranslations() as $translation) {
             if ($this->hasOwnTranslation($translation) === false) {
-                $this->missingTranslations[] = new Translation($translation->getPath(), $translation->getTranslationKey() , '', $translation->getTranslationSource());
+                $this->missingTranslations[] = new Translation($translation->getPath(), $translation->getTranslationKey(), '', $translation->getTranslationSource());
             }
         }
     }
@@ -108,7 +85,7 @@ class L10nTranslationFile extends AbstractTranslationFile
     /**
      * @return Translation[]
      */
-    public function getMissingTranslations()
+    public function getMissingTranslations(): array
     {
         return $this->missingTranslations;
     }
@@ -116,17 +93,15 @@ class L10nTranslationFile extends AbstractTranslationFile
     /**
      * @return Translation[]
      */
-    public function getMatchedMissingTranslations()
+    public function getMatchedMissingTranslations(): array
     {
         return $this->matchedMissingTranslations;
     }
 
-
     /**
      * @param Search $search
-     * @return void
      */
-    public function applySearch(Search $search)
+    public function applySearch(Search $search): void
     {
         if ($search->hasSearchString() === true) {
             $this->matchedTranslations = $this->getTranslationsBySearch($search);
@@ -140,7 +115,7 @@ class L10nTranslationFile extends AbstractTranslationFile
      * @param Search $search
      * @return Translation[]
      */
-    protected function getMissingTranslationsBySearch($search)
+    protected function getMissingTranslationsBySearch(\B13\L10nTranslator\Domain\Model\Search $search): array
     {
         $filtered = [];
         if ($search->getIncludeSource() === true) {
@@ -156,21 +131,17 @@ class L10nTranslationFile extends AbstractTranslationFile
         }
         return $filtered;
     }
-    
-    /**
-     * @return TranslationFile
-     */
-    public function getTranslationFile()
+
+    public function getTranslationFile(): \B13\L10nTranslator\Domain\Model\TranslationFile
     {
         return $this->translationFile;
     }
 
     /**
      * @param Translation $translation
-     * @return void
      * @throws Exception
      */
-    public function upsertTranslationTarget(Translation $translation)
+    public function upsertTranslationTarget(Translation $translation): void
     {
         if ($this->hasOwnTranslation($translation) === true) {
             $this->replaceTranslationTarget($translation);

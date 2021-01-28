@@ -1,6 +1,6 @@
 <?php
 
-namespace Lightwerk\L10nTranslator\Tests\Unit\Domain\Service;
+namespace B13\L10nTranslator\Tests\Unit\Domain\Service;
 
 /*
  * This file is part of the TYPO3 CMS project.
@@ -15,8 +15,8 @@ namespace Lightwerk\L10nTranslator\Tests\Unit\Domain\Service;
  * The TYPO3 project - inspiring people to share!
  */
 
-use Lightwerk\L10nTranslator\Domain\Model\TranslationFile;
-use Lightwerk\L10nTranslator\Domain\Service\TranslationFileWriterService;
+use B13\L10nTranslator\Domain\Model\TranslationFile;
+use B13\L10nTranslator\Domain\Service\TranslationFileWriterService;
 use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
 /**
@@ -28,7 +28,7 @@ class TranslationFileWriterServiceTest extends UnitTestCase
     /**
      * @return void
      * @test
-     * @expectedException \Lightwerk\L10nTranslator\Domain\Service\Exception
+     * @expectedException \B13\L10nTranslator\Domain\Service\Exception
      */
     public function assureValidXmlThrowsExceptionForInvalidXml()
     {

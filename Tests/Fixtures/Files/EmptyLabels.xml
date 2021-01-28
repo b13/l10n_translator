@@ -5,8 +5,7 @@
 		<description>description</description>
 	</meta>
 	<data type="array">
-		<languageKey index="default" type="array">
-			<label index="category_code">Category code</label>
+		<languageKey index="de" type="array">
 		</languageKey>
 	</data>
 </T3locallang>
