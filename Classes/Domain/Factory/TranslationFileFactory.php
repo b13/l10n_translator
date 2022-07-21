@@ -2,6 +2,7 @@
 namespace B13\L10nTranslator\Domain\Factory;
 
 use B13\L10nTranslator\Configuration\L10nConfiguration;
+use B13\L10nTranslator\Domain\Model\RawTranslationFile;
 use TYPO3\CMS\Core\Localization\LocalizationFactory;
 /*
  * This file is part of TYPO3 CMS-based extension l10n_translator by b13.
@@ -51,31 +52,27 @@ class TranslationFileFactory implements SingletonInterface
      * @param string $relativePath
      * @throws Exception
      */
-    public function findByRelativePath(string $relativePath): TranslationFile
+    public function findByRelativePath(string $relativePath, bool $raw = false): TranslationFile
     {
         $splFileInfo = new \SplFileInfo(Environment::getExtensionsPath() . DIRECTORY_SEPARATOR . $relativePath);
         if ($splFileInfo->isFile() === false) {
             throw new Exception('Cannot create splFileInfo with path ' . $relativePath, 1466093531);
         }
-        $translationFile = new TranslationFile();
+        $translationFile = $raw ? new RawTranslationFile() : new TranslationFile();
         $translationFile->initFileSystem($splFileInfo, $this->l10nConfiguration->getAvailableL10nLanguages(), $this->localizationFactory);
         return $translationFile;
     }
 
-    /**
-     * @param string $path
-     * @throws Exception
-     */
-    public function findByPath(string $path): TranslationFile
+    public function findByPath(string $path, bool $raw = false): TranslationFile
     {
         try {
-            $translationFile = $this->findByRelativePath($path);
+            $translationFile = $this->findByRelativePath($path, $raw);
         } catch (Exception $e) {
             $splFileInfo = new \SplFileInfo($path);
             if ($splFileInfo->isFile() === false) {
                 throw new Exception('cannot create splFileInfo with path ' . $path, 1466093537);
             }
-            $translationFile = new TranslationFile();
+            $translationFile = $raw ? new RawTranslationFile() : new TranslationFile();
             $translationFile->initFileSystem($splFileInfo, $this->l10nConfiguration->getAvailableL10nLanguages(), $this->localizationFactory);
         }
         return $translationFile;

@@ -82,6 +82,17 @@ class L10nTranslationFile extends AbstractTranslationFile
         }
     }
 
+    public function removeObsoleteTranslations(): void
+    {
+        $translationsToKeep = [];
+        foreach ($this->translations as $translation) {
+            if ($this->translationFile->hasOwnTranslation($translation)) {
+                $translationsToKeep[] = $translation;
+            }
+        }
+        $this->translations = $translationsToKeep;
+    }
+
     /**
      * @return Translation[]
      */

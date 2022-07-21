@@ -112,6 +112,14 @@ class TranslationFileService implements SingletonInterface
         $this->translationFileWriterService->writeTranslation($l10nTranslationFile);
     }
 
+    public function removeObsoleteLabels(string $l10nFile): void
+    {
+        $translationFile = $this->translationFileFactory->findByPath($l10nFile, true);
+        foreach ($translationFile->getL10nTranslationFiles() as $l10nTranslationFile) {
+            $this->translationFileWriterService->writeTranslation($l10nTranslationFile);
+        }
+    }
+
     public function createMissingSourceTags(string $l10nFile, string $language, string $sourceLanguage = 'default'): void
     {
         $l10nTranslationFile = $this->mergeSourceTagFromDefaultLanguage($l10nFile, $language);
@@ -127,6 +135,14 @@ class TranslationFileService implements SingletonInterface
         $l10nFiles = $this->l10nConfiguration->getAvailableL10nFiles();
         foreach ($l10nFiles as $l10nFile) {
             $this->createMissingLabels($l10nFile, $language, $sourceLanguage);
+        }
+    }
+
+    public function removeAllObsoleteLabels(): void
+    {
+        $l10nFiles = $this->l10nConfiguration->getAvailableL10nFiles();
+        foreach ($l10nFiles as $l10nFile) {
+            $this->removeObsoleteLabels($l10nFile);
         }
     }
 
