@@ -36,3 +36,9 @@ services:
       - name: 'console.command'
         command: 'l10nTranslator:create:missingLabels'
         schedulable: false
+
+  B13\L10nTranslator\Command\RemoveObsoleteLabelsCommand:
+    tags:
+      - name: 'console.command'
+        command: 'l10nTranslator:remove:obsoleteLabels'
+        schedulable: false
