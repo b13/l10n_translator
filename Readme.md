@@ -15,6 +15,7 @@ Features
 
 * Create missing files in the `var/labels` folder (CLI)
 * Create missing labels in files in the `var/labels` folder (CLI)
+* Remove obsolete labels in the `var/labels` folder (CLI)
 * Proof integrity of language files in the `var/labels` folder (CLI)
 * Edit existing labels in a custom backend module (BE)
 
@@ -45,3 +46,6 @@ Create all missing files for all existing sys_languages
 
 Create all missing labels for all existing sys_languages
 `l10nTranslator:create:missingLabels system`
+
+Remove all obsolete labels from locallang files in var/labels. Obsolete are labels that have been removed in the original file.
+`l10nTranslator:remove:obsoleteLabels`
