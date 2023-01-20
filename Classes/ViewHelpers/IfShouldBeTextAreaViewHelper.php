@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace B13\L10nTranslator\ViewHelpers;
 
@@ -12,20 +13,10 @@ namespace B13\L10nTranslator\ViewHelpers;
 
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
 
-/**
- * Class StringUtility
- *
- * @author Achim Fritz <af@b13.com>
- * @package TYPO3
- * @subpackage l10n_translator
- */
 class IfShouldBeTextAreaViewHelper extends AbstractConditionViewHelper
 {
     const STRLEN_FOR_TEXTAREA = 50;
 
-    /**
-     * Initializes the "then" and "else" arguments
-     */
     public function initializeArguments(): void
     {
         parent::initializeArguments();
@@ -38,7 +29,6 @@ class IfShouldBeTextAreaViewHelper extends AbstractConditionViewHelper
      *   * exceeds 50 characters
      *
      * @param array $arguments
-     * @return bool
      */
     protected static function evaluateCondition($arguments = null): bool
     {

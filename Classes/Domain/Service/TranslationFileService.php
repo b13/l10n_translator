@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
+
 namespace B13\L10nTranslator\Domain\Service;
 
-use B13\L10nTranslator\Configuration\L10nConfiguration;
 /*
  * This file is part of TYPO3 CMS-based extension l10n_translator by b13.
  *
@@ -10,52 +11,29 @@ use B13\L10nTranslator\Configuration\L10nConfiguration;
  * of the License, or any later version.
  */
 
+use B13\L10nTranslator\Configuration\L10nConfiguration;
 use B13\L10nTranslator\Domain\Factory\TranslationFileFactory;
 use B13\L10nTranslator\Domain\Model\L10nTranslationFile;
 use B13\L10nTranslator\Domain\Model\Search;
 use B13\L10nTranslator\Domain\Model\Translation;
 use TYPO3\CMS\Core\SingletonInterface;
 
-/**
- * @package TYPO3
- * @subpackage l10n_translator
- */
 class TranslationFileService implements SingletonInterface
 {
-    /**
-     * @var TranslationFileFactory
-     */
-    protected $translationFileFactory;
+    protected TranslationFileFactory $translationFileFactory;
+    protected TranslationFileWriterService $translationFileWriterService;
+    protected L10nConfiguration $l10nConfiguration;
 
-    /**
-     * @var TranslationFileWriterService
-     */
-    protected $translationFileWriterService;
-
-    /**
-     * @var \B13\L10nTranslator\Configuration\L10nConfiguration
-     */
-    protected $l10nConfiguration;
-
-    public function injectL10nConfiguration(L10nConfiguration $l10nConfiguration): void
-    {
+    public function __construct(
+        L10nConfiguration $l10nConfiguration,
+        TranslationFileFactory $translationFileFactory,
+        TranslationFileWriterService $translationFileWriterService
+    ) {
         $this->l10nConfiguration = $l10nConfiguration;
-    }
-
-    public function injectTranslationFileFactory(TranslationFileFactory $translationFileFactory): void
-    {
         $this->translationFileFactory = $translationFileFactory;
-    }
-
-    public function injectTranslationFileWriterService(TranslationFileWriterService $translationFileWriterService): void
-    {
         $this->translationFileWriterService = $translationFileWriterService;
     }
 
-    /**
-     * @param string $language
-     * @param bool $copyLabels
-     */
     public function createMissingFiles(string $language, bool $copyLabels = true): void
     {
         $search = new Search('', '', '');
@@ -77,11 +55,6 @@ class TranslationFileService implements SingletonInterface
         }
     }
 
-    /**
-     * @param string $l10nFile
-     * @param string $language
-     * @param string $sourceLanguage
-     */
     public function overwriteWithLanguage(string $l10nFile, string $language, string $sourceLanguage): void
     {
         $translationFile = $this->translationFileFactory->findByPath($l10nFile);
@@ -97,11 +70,6 @@ class TranslationFileService implements SingletonInterface
         $this->translationFileWriterService->writeTranslation($l10nTranslationFile);
     }
 
-    /**
-     * @param string $l10nFile
-     * @param string $language
-     * @param string $sourceLanguage
-     */
     public function createMissingLabels(string $l10nFile, string $language, string $sourceLanguage = 'default'): void
     {
         if ($sourceLanguage !== 'default') {
@@ -126,10 +94,6 @@ class TranslationFileService implements SingletonInterface
         $this->translationFileWriterService->writeTranslation($l10nTranslationFile);
     }
 
-    /**
-     * @param string $language
-     * @param string $sourceLanguage
-     */
     public function createAllMissingLabels(string $language, string $sourceLanguage = 'default'): void
     {
         $l10nFiles = $this->l10nConfiguration->getAvailableL10nFiles();
@@ -146,9 +110,6 @@ class TranslationFileService implements SingletonInterface
         }
     }
 
-    /**
-     * @param string $language
-     */
     public function createSourceTagsForAllFiles(string $language): void
     {
         $l10nFiles = $this->l10nConfiguration->getAvailableL10nFiles();
@@ -165,12 +126,6 @@ class TranslationFileService implements SingletonInterface
         }
     }
 
-    /**
-     * @param string $l10nFile
-     * @param string $language
-     * @param string $sourceLanguage
-     * @return L10nTranslationFile
-     */
     protected function mergeMissingLabelsFromSourceLanguage(string $l10nFile, string $language, string $sourceLanguage): L10nTranslationFile
     {
         $translationFile = $this->translationFileFactory->findByPath($l10nFile);
@@ -189,11 +144,6 @@ class TranslationFileService implements SingletonInterface
         return $l10nTranslationFile;
     }
 
-    /**
-     * @param string $l10nFile
-     * @param string $language
-     * @return L10nTranslationFile
-     */
     protected function mergeMissingLabelsFromDefaultLanguage(string $l10nFile, string $language): L10nTranslationFile
     {
         $translationFile = $this->translationFileFactory->findByPath($l10nFile);
@@ -210,11 +160,6 @@ class TranslationFileService implements SingletonInterface
         return $l10nTranslationFile;
     }
 
-    /**
-     * @param string $l10nFile
-     * @param string $language
-     * @return L10nTranslationFile
-     */
     protected function mergeSourceTagFromDefaultLanguage(string $l10nFile, string $language): L10nTranslationFile
     {
         $translationFile = $this->translationFileFactory->findByPath($l10nFile);
@@ -233,8 +178,6 @@ class TranslationFileService implements SingletonInterface
      * other languages.
      *
      * So changes in "default" are reflected in an updated source of all other languages.
-     *
-     * @param array $postParam
      */
     public function updateSourceInFiles(array $postParam): void
     {

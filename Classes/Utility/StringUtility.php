@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace B13\L10nTranslator\Utility;
 
@@ -12,13 +13,6 @@ namespace B13\L10nTranslator\Utility;
 
 use TYPO3\CMS\Core\SingletonInterface;
 
-/**
- * Class StringUtility
- *
- * @author Daniel Goerz <dlg@b13.com>
- * @package TYPO3
- * @subpackage l10n_translator
- */
 class StringUtility implements SingletonInterface
 {
     /**
@@ -27,8 +21,6 @@ class StringUtility implements SingletonInterface
      *
      * E.g.:
      * news/Resources/Private/Language/locallang.xlf => news (locallang.xlf)
-     *
-     * @param string $fullPath
      */
     public function stripPathToLanguageFile(string $fullPath): string
     {

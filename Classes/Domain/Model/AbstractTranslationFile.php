@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace B13\L10nTranslator\Domain\Model;
 
 /*
@@ -8,12 +10,9 @@ namespace B13\L10nTranslator\Domain\Model;
  * the terms of the GNU General Public License, either version 2
  * of the License, or any later version.
  */
+
 use TYPO3\CMS\Core\Localization\LocalizationFactory;
 
-/**
- * @package TYPO3
- * @subpackage l10n_translator
- */
 abstract class AbstractTranslationFile
 {
     /**

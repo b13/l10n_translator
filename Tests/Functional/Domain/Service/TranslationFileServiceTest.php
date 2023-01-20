@@ -23,7 +23,6 @@ namespace B13\L10nTranslator\Tests\Functional\Domain\Service;
 use B13\L10nTranslator\Domain\Service\TranslationFileService;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 /**
@@ -84,8 +83,7 @@ class TranslationFileServiceTest extends FunctionalTestCase
             mkdir($this->l10nItFolder, 0777, true);
         }
 
-        $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-        $this->translationFileService = $objectManager->get(TranslationFileService::class);
+        $this->translationFileService = GeneralUtility::makeInstance(TranslationFileService::class);
     }
 
     /**

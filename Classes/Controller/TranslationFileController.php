@@ -1,10 +1,8 @@
 <?php
+declare(strict_types=1);
+
 namespace B13\L10nTranslator\Controller;
 
-use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
-use B13\L10nTranslator\Utility\StringUtility;
-use B13\L10nTranslator\Domain\Factory\TranslationFileFactory;
-use B13\L10nTranslator\Exception;
 /*
  * This file is part of TYPO3 CMS-based extension l10n_translator by b13.
  *
@@ -13,60 +11,40 @@ use B13\L10nTranslator\Exception;
  * of the License, or any later version.
  */
 
+use Psr\Http\Message\ResponseInterface;
+use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
+use TYPO3\CMS\Core\Page\PageRenderer;
+use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
+use B13\L10nTranslator\Utility\StringUtility;
+use B13\L10nTranslator\Domain\Factory\TranslationFileFactory;
+use B13\L10nTranslator\Exception;
 use B13\L10nTranslator\Configuration\L10nConfiguration;
 use B13\L10nTranslator\Domain\Model\Search;
-use TYPO3\CMS\Backend\View\BackendTemplateView;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Property\PropertyMappingConfiguration;
 
-/**
- * @package TYPO3
- * @subpackage l10n_translator
- */
 class TranslationFileController extends ActionController
 {
-    /**
-     * @var string
-     */
-    protected $defaultViewObjectName = BackendTemplateView::class;
+    protected TranslationFileFactory $translationFileFactory;
+    protected StringUtility $stringUtility;
+    private PageRenderer $pageRenderer;
+    private ModuleTemplateFactory $moduleTemplateFactory;
 
-    /**
-     * @var BackendTemplateView
-     */
-    protected $view;
-
-    /**
-     * @var \B13\L10nTranslator\Domain\Factory\TranslationFileFactory
-     */
-    protected $translationFileFactory;
-
-    /**
-     * @var \B13\L10nTranslator\Utility\StringUtility
-     */
-    protected $stringUtility;
-
-    /**
-     * @param \B13\L10nTranslator\Utility\StringUtility $stringUtility
-     */
-    public function injectStringUtility(StringUtility $stringUtility): void
-    {
-        $this->stringUtility = $stringUtility;
-    }
-
-    /**
-     * @param \B13\L10nTranslator\Domain\Factory\TranslationFileFactory $translationFileFactory
-     */
-    public function injectTranslationFileFactory(TranslationFileFactory $translationFileFactory): void
-    {
+    public function __construct(
+        PageRenderer $pageRenderer,
+        TranslationFileFactory $translationFileFactory,
+        StringUtility $stringUtility,
+        ModuleTemplateFactory $moduleTemplateFactory
+    ) {
+        $this->pageRenderer = $pageRenderer;
         $this->translationFileFactory = $translationFileFactory;
+        $this->stringUtility = $stringUtility;
+        $this->moduleTemplateFactory = $moduleTemplateFactory;
     }
 
     protected function initializeListAction(): void
     {
-        parent::initializeAction();
         if ($this->request->hasArgument('search')) {
-            /** @var PropertyMappingConfiguration $propertyMappingConfiguration */
             $propertyMappingConfiguration = $this->arguments['search']->getPropertyMappingConfiguration();
             $propertyMappingConfiguration->allowProperties('language');
             $propertyMappingConfiguration->allowProperties('l10nFile');
@@ -80,13 +58,10 @@ class TranslationFileController extends ActionController
         }
     }
 
-    /**
-     * @param \B13\L10nTranslator\Domain\Model\Search $search
-     */
-    public function listAction(Search $search = null): void
+    public function listAction(Search $search = null): ResponseInterface
     {
         $l10nConfiguration = GeneralUtility::makeInstance(L10nConfiguration::class);
-        $this->view->getModuleTemplate()->getPageRenderer()->loadRequireJsModule('TYPO3/CMS/L10nTranslator/L10nTranslator');
+        $this->pageRenderer->loadRequireJsModule('TYPO3/CMS/L10nTranslator/L10nTranslator');
         $translationFiles = [];
         $availableL10nFiles = $l10nConfiguration->getAvailableL10nFiles();
         $availableLanguages = $l10nConfiguration->getAvailableL10nLanguages();
@@ -114,5 +89,7 @@ class TranslationFileController extends ActionController
         }
         $this->view->assign('search', $search);
         $this->view->assign('translationFiles', $translationFiles);
+        $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
+        return $this->htmlResponse($moduleTemplate->setContent($this->view->render())->renderContent());
     }
 }

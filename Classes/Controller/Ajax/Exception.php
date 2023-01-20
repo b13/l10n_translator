@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace B13\L10nTranslator\Controller\Ajax;
 
 /*
@@ -9,10 +11,6 @@ namespace B13\L10nTranslator\Controller\Ajax;
  * of the License, or any later version.
  */
 
-/**
- * @package TYPO3
- * @subpackage l10n_translator
- */
 class Exception extends \B13\L10nTranslator\Exception
 {
 }
