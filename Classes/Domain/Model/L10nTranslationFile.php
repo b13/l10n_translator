@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace B13\L10nTranslator\Domain\Model;
 
 /*
@@ -12,10 +14,6 @@ namespace B13\L10nTranslator\Domain\Model;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Localization\LocalizationFactory;
 
-/**
- * @package TYPO3
- * @subpackage l10n_translator
- */
 class L10nTranslationFile extends AbstractTranslationFile
 {
     /**

@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
+
 namespace B13\L10nTranslator\Controller\Ajax;
 
-use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 /*
  * This file is part of TYPO3 CMS-based extension l10n_translator by b13.
  *
@@ -16,55 +17,35 @@ use B13\L10nTranslator\Domain\Model\Translation;
 use B13\L10nTranslator\Domain\Service\TranslationFileService;
 use B13\L10nTranslator\Domain\Service\TranslationFileWriterService;
 use Psr\Http\Message\ServerRequestInterface;
+use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Http\JsonResponse;
-use TYPO3\CMS\Core\Messaging\FlashMessage;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
+use TYPO3\CMS\Core\Messaging\AbstractMessage;
 
-/**
- * @package TYPO3
- * @subpackage l10n_translator
- */
 class TranslationController
 {
-    /**
-     * @var \B13\L10nTranslator\Domain\Factory\TranslationFileFactory
-     */
-    protected $translationFileFactory;
+    protected TranslationFileFactory $translationFileFactory;
+    protected L10nConfiguration $l10nConfiguration;
+    protected TranslationFileWriterService $translationFileWriterService;
+    protected CacheManager $cacheManager;
+    protected TranslationFileService $translationFileService;
 
-    /**
-     * @var \TYPO3\CMS\Extbase\Object\ObjectManager
-     */
-    protected $objectManager;
+    public function __construct(
+        L10nConfiguration $l10nConfiguration,
+        TranslationFileFactory $translationFileFactory,
+        TranslationFileWriterService $translationFileWriterService,
+        TranslationFileService $translationFileService,
+        CacheManager $cacheManager
+    ) {
+        $this->l10nConfiguration = $l10nConfiguration;
+        $this->translationFileFactory = $translationFileFactory;
+        $this->translationFileWriterService = $translationFileWriterService;
+        $this->translationFileService = $translationFileService;
+        $this->cacheManager = $cacheManager;
+    }
 
-    /**
-     * @var \B13\L10nTranslator\Configuration\L10nConfiguration
-     */
-    protected $l10nConfiguration;
-
-    /**
-     * @var \B13\L10nTranslator\Domain\Service\TranslationFileWriterService
-     */
-    protected $translationFileWriterService;
-
-    /**
-     * @var \TYPO3\CMS\Core\Cache\CacheManager
-     */
-    protected $cacheManager;
-
-    /**
-     * @var \B13\L10nTranslator\Domain\Service\TranslationFileService
-     */
-    protected $translationFileService;
-
-    /**
-     * @param ServerRequestInterface $request
-     * @return JsonResponse
-     */
     public function update(ServerRequestInterface $request): JsonResponse
     {
-        $this->initializeObjects();
         try {
             $this->assureModuleAccess();
             $postParams = $request->getParsedBody();
@@ -82,7 +63,7 @@ class TranslationController
                 'flashMessage' => [
                     'title' => 'OK',
                     'message' => 'label updated',
-                    'severity' => FlashMessage::OK
+                    'severity' => AbstractMessage::OK
                 ]
             ];
         } catch (\Exception $e) {
@@ -90,7 +71,7 @@ class TranslationController
                 'flashMessage' => [
                     'title' => 'ERROR',
                     'message' => $e->getMessage() . ' - ' . $e->getCode(),
-                    'severity' => FlashMessage::ERROR
+                    'severity' => AbstractMessage::ERROR
                 ]
             ];
         }
@@ -98,9 +79,6 @@ class TranslationController
         return new JsonResponse($content);
     }
 
-    /**
-     * @throws Exception
-     */
     protected function assureModuleAccess(): void
     {
         $beUser = $this->getBeUser();
@@ -114,16 +92,6 @@ class TranslationController
         return $GLOBALS['BE_USER'];
     }
 
-    protected function initializeObjects(): void
-    {
-        $this->objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-        $this->l10nConfiguration = GeneralUtility::makeInstance(L10nConfiguration::class);
-        $this->translationFileFactory = $this->objectManager->get(TranslationFileFactory::class);
-        $this->translationFileWriterService = $this->objectManager->get(TranslationFileWriterService::class);
-        $this->translationFileService = $this->objectManager->get(TranslationFileService::class);
-        $this->cacheManager = $this->objectManager->get(CacheManager::class);
-    }
-
     protected function flushCache(): void
     {
         $cacheFrontend = $this->cacheManager->getCache('l10n');
@@ -132,7 +100,6 @@ class TranslationController
 
     /**
      * @param mixed $postParams
-     * @throws Exception
      */
     protected function validateRequest($postParams): void
     {

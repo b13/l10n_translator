@@ -7,6 +7,9 @@ services:
   B13\L10nTranslator\:
     resource: '../Classes/*'
 
+  B13\L10nTranslator\Controller\Ajax\TranslationController:
+    public: true
+
   B13\L10nTranslator\Command\ListCommand:
     tags:
       - name: 'console.command'

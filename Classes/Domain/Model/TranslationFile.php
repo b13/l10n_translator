@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace B13\L10nTranslator\Domain\Model;
 
 /*
@@ -12,22 +14,17 @@ namespace B13\L10nTranslator\Domain\Model;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Localization\LocalizationFactory;
 
-/**
- * @package TYPO3
- * @subpackage l10n_translator
- */
 class TranslationFile extends AbstractTranslationFile
 {
     /**
      * @var L10nTranslationFile[]
      */
-    protected $l10nTranslationFiles = [];
+    protected array $l10nTranslationFiles = [];
 
     /**
      * @param \SplFileInfo $splFileInfo
      * @param array $languages
      * @param LocalizationFactory $localizationFactory
-     * @throws Exception
      */
     public function initFileSystem(\SplFileInfo $splFileInfo, array $languages, LocalizationFactory $localizationFactory): void
     {
@@ -52,19 +49,11 @@ class TranslationFile extends AbstractTranslationFile
         }
     }
 
-    /**
-     * @param LocalizationFactory $localizationFactory
-     * @return array
-     */
     protected function getParsedData(LocalizationFactory $localizationFactory): array
     {
         return $localizationFactory->getParsedData($this->getCleanPath(), $this->getLanguage());
     }
 
-    /**
-     * @param string $language
-     * @throws Exception
-     */
     public function getL10nTranslationFile(string $language): L10nTranslationFile
     {
         if (isset($this->l10nTranslationFiles[$language]) === false) {
@@ -73,9 +62,6 @@ class TranslationFile extends AbstractTranslationFile
         return $this->l10nTranslationFiles[$language];
     }
 
-    /**
-     * @param string $language
-     */
     public function getL10nTranslationFilePath(string $language): string
     {
         $parts = explode(DIRECTORY_SEPARATOR, $this->getRelativePath());
@@ -85,9 +71,6 @@ class TranslationFile extends AbstractTranslationFile
         return $path;
     }
 
-    /**
-     * @param Search $search
-     */
     public function applySearch(Search $search): void
     {
         foreach ($this->getL10nTranslationFiles() as $l10nTranslationFile) {

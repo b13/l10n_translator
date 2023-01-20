@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace B13\L10nTranslator\Domain\Model;
 
 /*
@@ -9,10 +11,6 @@ namespace B13\L10nTranslator\Domain\Model;
  * of the License, or any later version.
  */
 
-/**
- * @package TYPO3
- * @subpackage l10n_translator
- */
 class Translation
 {
     /**
@@ -35,12 +33,6 @@ class Translation
      */
     protected $path = '';
 
-    /**
-     * @param string $path
-     * @param string $translationKey
-     * @param string $translationTarget
-     * @param string $translationSource
-     */
     public function __construct(string $path, string $translationKey, string $translationTarget, string $translationSource = '')
     {
         $this->path = $path;
@@ -49,9 +41,6 @@ class Translation
         $this->translationTarget = $translationTarget;
     }
 
-    /**
-     * @param Search $search
-     */
     protected function exactMatchSearch(Search $search): bool
     {
         $searchString = $search->getSearchString();
@@ -68,9 +57,6 @@ class Translation
         return $return;
     }
 
-    /**
-     * @param Search $search
-     */
     protected function caseInSensitiveMatchSearch(Search $search): bool
     {
         $searchString = $search->getSearchString();
@@ -87,9 +73,6 @@ class Translation
         return $return;
     }
 
-    /**
-     * @param Search $search
-     */
     protected function caseSensitiveMatchSearch(Search $search): bool
     {
         $searchString = $search->getSearchString();
@@ -106,9 +89,6 @@ class Translation
         return $return;
     }
 
-    /**
-     * @param Search $search
-     */
     public function matchSearch(Search $search): bool
     {
         if ($search->getExactMatch() === true) {
@@ -120,49 +100,31 @@ class Translation
         return $this->caseInSensitiveMatchSearch($search);
     }
 
-    /**
-     * @param Translation $translation
-     */
     public function replaceTranslationTargetByOtherTranslation(Translation $translation): void
     {
         $this->translationTarget = $translation->getTranslationTarget();
     }
 
-    /**
-     * @param Translation $translation
-     */
     public function replaceTranslationSourceByOtherTranslation(Translation $translation): void
     {
         $this->translationSource = $translation->getTranslationSource();
     }
 
-    /**
-     * @return string $translationValue
-     */
     public function getTranslationTarget(): string
     {
         return $this->translationTarget;
     }
 
-    /**
-     * @return string $translationValue
-     */
     public function getTranslationSource(): string
     {
         return $this->translationSource;
     }
 
-    /**
-     * @return string $translationKey
-     */
     public function getTranslationKey(): string
     {
         return $this->translationKey;
     }
 
-    /**
-     * @return string $path
-     */
     public function getPath(): string
     {
         return $this->path;

@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace B13\L10nTranslator\Domain\Factory;
 
 use B13\L10nTranslator\Configuration\L10nConfiguration;
@@ -16,10 +18,6 @@ use B13\L10nTranslator\Domain\Model\TranslationFile;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\SingletonInterface;
 
-/**
- * @package TYPO3
- * @subpackage l10n_translator
- */
 class TranslationFileFactory implements SingletonInterface
 {
     /**

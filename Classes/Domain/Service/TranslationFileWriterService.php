@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace B13\L10nTranslator\Domain\Service;
 
 /*
@@ -13,16 +15,8 @@ use B13\L10nTranslator\Domain\Model\AbstractTranslationFile;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\SingletonInterface;
 
-/**
- * @package TYPO3
- * @subpackage l10n_translator
- */
 class TranslationFileWriterService implements SingletonInterface
 {
-    /**
-     * @param AbstractTranslationFile $translationFile
-     * @throws Exception
-     */
     public function writeTranslation(AbstractTranslationFile $translationFile): void
     {
         if ($translationFile->getSplFileInfo()->getExtension() === 'xlf') {
@@ -34,10 +28,6 @@ class TranslationFileWriterService implements SingletonInterface
         }
     }
 
-    /**
-     * @param AbstractTranslationFile $translationFile
-     * @throws Exception
-     */
     public function writeTranslationXlf(AbstractTranslationFile $translationFile): void
     {
         $xmlFile = [];
@@ -84,10 +74,6 @@ class TranslationFileWriterService implements SingletonInterface
         }
     }
 
-    /**
-     * @param AbstractTranslationFile $translationFile
-     * @throws Exception
-     */
     public function writeTranslationXml(AbstractTranslationFile $translationFile): void
     {
         $xmlFile = [];
@@ -110,11 +96,6 @@ class TranslationFileWriterService implements SingletonInterface
         }
     }
 
-    /**
-     * @param string $xml
-     * @param AbstractTranslationFile $translationFile
-     * @throws \B13\L10nTranslator\Domain\Service\Exception
-     */
     protected function assureValidXml(string $xml, AbstractTranslationFile $translationFile): void
     {
         try {
