@@ -31,23 +31,23 @@ class XliffParser extends \TYPO3\CMS\Core\Localization\Parser\XliffParser
      * @param string $languageKey Language key
      * @throws \TYPO3\CMS\Core\Localization\Exception\FileNotFoundException
      */
-    public function getParsedData($sourcePath, $languageKey): array
+    public function _getParsedData($sourcePath, $languageKey, ?string $labelsPath): array
     {
         if (Environment::isCli()) {
-            return parent::getParsedData($sourcePath, $languageKey);
+            return parent::_getParsedData($sourcePath, $languageKey, $labelsPath);
         }
 
         if ($languageKey !== 'default') {
-            return parent::getParsedData($sourcePath, $languageKey);
+            return parent::_getParsedData($sourcePath, $languageKey, $labelsPath);
         }
 
         $l10nManagerConfiguration = GeneralUtility::makeInstance(L10nConfiguration::class);
         if ($l10nManagerConfiguration->supportsDefault() === false) {
-            return parent::getParsedData($sourcePath, $languageKey);
+            return parent::_getParsedData($sourcePath, $languageKey, $labelsPath);
         }
 
         if ($l10nManagerConfiguration->isAbsoluteFilePathAvailable($sourcePath) === false) {
-            return parent::getParsedData($sourcePath, $languageKey);
+            return parent::_getParsedData($sourcePath, $languageKey, $labelsPath);
         }
 
         // copied from parent::getParsedData from here on
@@ -60,7 +60,7 @@ class XliffParser extends \TYPO3\CMS\Core\Localization\Parser\XliffParser
         }
         if (!@is_file($this->sourcePath)) {
             // another change here. If we cannot find a localizedFile for default, fallback to core handling
-            return parent::getParsedData($sourcePath, $languageKey);
+            return parent::_getParsedData($sourcePath, $languageKey, $labelsPath);
         }
         $LOCAL_LANG = [];
         $LOCAL_LANG[$languageKey] = $this->parseXmlFile();
