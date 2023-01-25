@@ -31,7 +31,7 @@ class XliffParser extends \TYPO3\CMS\Core\Localization\Parser\XliffParser
      * @param string $languageKey Language key
      * @throws \TYPO3\CMS\Core\Localization\Exception\FileNotFoundException
      */
-    public function getParsedData($sourcePath, $languageKey): array
+    public function _getParsedData($sourcePath, $languageKey, ?string $labelsPath): array
     {
         if (Environment::isCli()) {
             return parent::getParsedData($sourcePath, $languageKey);
