@@ -17,6 +17,7 @@ use B13\L10nTranslator\Domain\Model\Search;
 use B13\L10nTranslator\Domain\Model\TranslationFile;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\SingletonInterface;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class TranslationFileFactory implements SingletonInterface
 {
@@ -46,13 +47,9 @@ class TranslationFileFactory implements SingletonInterface
         $this->localizationFactory = $localizationFactory;
     }
 
-    /**
-     * @param string $relativePath
-     * @throws Exception
-     */
     public function findByRelativePath(string $relativePath, bool $raw = false): TranslationFile
     {
-        $splFileInfo = new \SplFileInfo(Environment::getExtensionsPath() . DIRECTORY_SEPARATOR . $relativePath);
+        $splFileInfo = new \SplFileInfo(GeneralUtility::getFileAbsFileName('EXT:' . $relativePath));
         if ($splFileInfo->isFile() === false) {
             throw new Exception('Cannot create splFileInfo with path ' . $relativePath, 1466093531);
         }
