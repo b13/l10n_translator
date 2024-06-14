@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace B13\L10nTranslator\Domain\Model;
@@ -16,37 +17,20 @@ use TYPO3\CMS\Core\Localization\LocalizationFactory;
 
 class L10nTranslationFile extends AbstractTranslationFile
 {
-    /**
-     * @var TranslationFile
-     */
-    protected $translationFile;
+    /** @var Translation[] */
+    protected array $missingTranslations = [];
 
-    /**
-     * @var Translation[]
-     */
-    protected $missingTranslations = [];
+    /** @var Translation[] */
+    protected array $matchedMissingTranslations = [];
+    protected ?LocalizationFactory $localizationFactory = null;
 
-    /**
-     * @var Translation[]
-     */
-    protected $matchedMissingTranslations = [];
-
-    /**
-     * @param TranslationFile $translationFile
-     * @throws Exception
-     */
-    public function __construct(TranslationFile $translationFile)
+    public function __construct(protected TranslationFile $translationFile)
     {
-        $this->translationFile = $translationFile;
     }
 
-    /**
-     * @param \SplFileInfo $splFileInfo
-     * @param LocalizationFactory $localizationFactory
-     * @throws Exception
-     */
     public function initFileSystem(\SplFileInfo $splFileInfo, LocalizationFactory $localizationFactory): void
     {
+        $this->localizationFactory = $localizationFactory;
         $this->splFileInfo = $splFileInfo;
         $pathPart = str_replace('/', '\/', Environment::getLabelsPath() . DIRECTORY_SEPARATOR);
         $this->relativePath = preg_replace('/' . $pathPart . '/', '', $this->getCleanPath());
@@ -59,10 +43,24 @@ class L10nTranslationFile extends AbstractTranslationFile
         $this->initTranslations($localizationFactory);
     }
 
-    /**
-     * @param LocalizationFactory $localizationFactory
-     * @return array
-     */
+    public function fillMissingTranslationsFromOriginalFileAndLanguage(string $language): void
+    {
+        if ($this->localizationFactory === null) {
+            return;
+        }
+        $parsedData = $this->localizationFactory->getParsedData($this->getTranslationFile()->getCleanPath(), $language);
+        foreach ($parsedData[$language] as $key => $labels) {
+            if (!isset($labels[0]['source']) || !isset($labels[0]['target'])) {
+                continue;
+            }
+            $translation = new Translation($this->getCleanPath(), $key, $labels[0]['target'], $labels[0]['source']);
+            if ($this->hasOwnTranslation($translation)) {
+                continue;
+            }
+            $this->addTranslation($translation);
+        }
+    }
+
     protected function getParsedData(LocalizationFactory $localizationFactory): array
     {
         if ($this->getSplFileInfo()->isFile() === true) {
@@ -91,25 +89,18 @@ class L10nTranslationFile extends AbstractTranslationFile
         $this->translations = $translationsToKeep;
     }
 
-    /**
-     * @return Translation[]
-     */
+    /** @return Translation[] */
     public function getMissingTranslations(): array
     {
         return $this->missingTranslations;
     }
 
-    /**
-     * @return Translation[]
-     */
+    /** @return Translation[] */
     public function getMatchedMissingTranslations(): array
     {
         return $this->matchedMissingTranslations;
     }
 
-    /**
-     * @param Search $search
-     */
     public function applySearch(Search $search): void
     {
         if ($search->hasSearchString() === true) {
@@ -120,11 +111,8 @@ class L10nTranslationFile extends AbstractTranslationFile
         $this->matchedMissingTranslations = $this->getMissingTranslationsBySearch($search);
     }
 
-    /**
-     * @param Search $search
-     * @return Translation[]
-     */
-    protected function getMissingTranslationsBySearch(\B13\L10nTranslator\Domain\Model\Search $search): array
+    /** @return Translation[] */
+    protected function getMissingTranslationsBySearch(Search $search): array
     {
         $filtered = [];
         if ($search->getIncludeSource() === true) {
@@ -141,21 +129,17 @@ class L10nTranslationFile extends AbstractTranslationFile
         return $filtered;
     }
 
-    public function getTranslationFile(): \B13\L10nTranslator\Domain\Model\TranslationFile
+    public function getTranslationFile(): TranslationFile
     {
         return $this->translationFile;
     }
 
-    /**
-     * @param Translation $translation
-     * @throws Exception
-     */
     public function upsertTranslationTarget(Translation $translation): void
     {
         if ($this->hasOwnTranslation($translation) === true) {
             $this->replaceTranslationTarget($translation);
         } elseif ($this->translationFile->hasOwnTranslation($translation) === true) {
-            $clonedTranslation = clone($this->translationFile->getOwnTranslation($translation));
+            $clonedTranslation = clone $this->translationFile->getOwnTranslation($translation);
             $clonedTranslation->replaceTranslationTargetByOtherTranslation($translation);
             $this->addTranslation($clonedTranslation);
         } else {

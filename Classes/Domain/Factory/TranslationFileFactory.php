@@ -1,11 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
 namespace B13\L10nTranslator\Domain\Factory;
 
 use B13\L10nTranslator\Configuration\L10nConfiguration;
 use B13\L10nTranslator\Domain\Model\RawTranslationFile;
-use TYPO3\CMS\Core\Localization\LocalizationFactory;
+use B13\L10nTranslator\Domain\Model\Search;
 /*
  * This file is part of TYPO3 CMS-based extension l10n_translator by b13.
  *
@@ -13,9 +14,8 @@ use TYPO3\CMS\Core\Localization\LocalizationFactory;
  * the terms of the GNU General Public License, either version 2
  * of the License, or any later version.
  */
-use B13\L10nTranslator\Domain\Model\Search;
 use B13\L10nTranslator\Domain\Model\TranslationFile;
-use TYPO3\CMS\Core\Core\Environment;
+use TYPO3\CMS\Core\Localization\LocalizationFactory;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -84,7 +84,7 @@ class TranslationFileFactory implements SingletonInterface
         $languages = $search->hasLanguage() ? [$search->getLanguage()] : $this->l10nConfiguration->getAvailableL10nLanguages();
         $availableL10nFiles = $search->hasL10nFile() ? [$search->getL10nFile()] : $this->l10nConfiguration->getAvailableL10nFiles();
         foreach ($availableL10nFiles as $availableL10nFile) {
-            $path = Environment::getExtensionsPath() . DIRECTORY_SEPARATOR . $availableL10nFile;
+            $path = GeneralUtility::getFileAbsFileName('EXT:' . $availableL10nFile);
             $translationFile = new TranslationFile();
             $translationFile->initFileSystem(new \SplFileInfo($path), $languages, $this->localizationFactory);
             $translationFile->applySearch($search);

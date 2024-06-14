@@ -1,10 +1,11 @@
 <?php
+
 declare(strict_types=1);
 
 namespace B13\L10nTranslator\Command;
 
-use B13\L10nTranslator\Domain\Model\Exception;
 use B13\L10nTranslator\Command\Helper\L10nTranslatorCommand;
+use B13\L10nTranslator\Domain\Model\Exception;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;

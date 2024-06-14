@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace B13\L10nTranslator\Utility;
@@ -26,7 +27,7 @@ class StringUtility implements SingletonInterface
     {
         $pathsToStrip = [
             '/Resources/Private/Language/',
-            '/pi1/'
+            '/pi1/',
         ];
 
         foreach ($pathsToStrip as $pathToStrip) {

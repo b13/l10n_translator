@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace B13\L10nTranslator\Domain\Service;
@@ -12,8 +13,8 @@ namespace B13\L10nTranslator\Domain\Service;
  */
 
 use B13\L10nTranslator\Domain\Model\AbstractTranslationFile;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\SingletonInterface;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class TranslationFileWriterService implements SingletonInterface
 {
@@ -21,8 +22,6 @@ class TranslationFileWriterService implements SingletonInterface
     {
         if ($translationFile->getSplFileInfo()->getExtension() === 'xlf') {
             $this->writeTranslationXlf($translationFile);
-        } elseif ($translationFile->getSplFileInfo()->getExtension() === 'xml') {
-            $this->writeTranslationXml($translationFile);
         } else {
             throw new Exception('unknown Extension ' . $translationFile->getSplFileInfo()->getExtension(), 1467184635);
         }
@@ -71,28 +70,6 @@ class TranslationFileWriterService implements SingletonInterface
         $res = GeneralUtility::writeFile(str_replace('.xml', '.xlf', $translationFile->getCleanPath()), $xml);
         if ($res === false) {
             throw new Exception('cannot write file ' . $translationFile->getCleanPath(), 1466440408);
-        }
-    }
-
-    public function writeTranslationXml(AbstractTranslationFile $translationFile): void
-    {
-        $xmlFile = [];
-        $xmlFile[] = '<?xml version="1.0" encoding="utf-8" standalone="yes" ?>';
-        $xmlFile[] = '<T3locallangExt>';
-        $xmlFile[] = "\t" . '<data type="array">';
-        $xmlFile[] = "\t\t" . '<languageKey index="' . $translationFile->getLanguage() . '" type="array">';
-        $translations = $translationFile->getTranslations();
-        foreach ($translations as $translation) {
-            $xmlFile[] = "\t\t\t" . '<label index="' . $translation->getTranslationKey() . '">' . htmlspecialchars($translation->getTranslationTarget()) . '</label>';
-        }
-        $xmlFile[] = "\t\t" . '</languageKey>';
-        $xmlFile[] = "\t" . '</data>';
-        $xmlFile[] = '</T3locallangExt>';
-        $xml = implode(LF, $xmlFile);
-        $this->assureValidXml($xml, $translationFile);
-        $res = GeneralUtility::writeFile($translationFile->getCleanPath(), $xml);
-        if ($res === false) {
-            throw new Exception('cannot write file ' . $translationFile->getCleanPath(), 1466440409);
         }
     }
 

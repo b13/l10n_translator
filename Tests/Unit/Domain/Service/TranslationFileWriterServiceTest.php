@@ -19,14 +19,9 @@ use B13\L10nTranslator\Domain\Model\TranslationFile;
 use B13\L10nTranslator\Domain\Service\TranslationFileWriterService;
 use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
-/**
- * @package TYPO3
- * @subpackage l10n_translator
- */
 class TranslationFileWriterServiceTest extends UnitTestCase
 {
     /**
-     * @return void
      * @test
      * @expectedException \B13\L10nTranslator\Domain\Service\Exception
      */
