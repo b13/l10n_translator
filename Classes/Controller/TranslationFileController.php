@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace B13\L10nTranslator\Controller;
@@ -11,17 +12,17 @@ namespace B13\L10nTranslator\Controller;
  * of the License, or any later version.
  */
 
+use B13\L10nTranslator\Configuration\L10nConfiguration;
+use B13\L10nTranslator\Domain\Factory\TranslationFileFactory;
+use B13\L10nTranslator\Domain\Model\Search;
+use B13\L10nTranslator\Exception;
+use B13\L10nTranslator\Utility\StringUtility;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
-use TYPO3\CMS\Core\Page\PageRenderer;
-use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
-use B13\L10nTranslator\Utility\StringUtility;
-use B13\L10nTranslator\Domain\Factory\TranslationFileFactory;
-use B13\L10nTranslator\Exception;
-use B13\L10nTranslator\Configuration\L10nConfiguration;
-use B13\L10nTranslator\Domain\Model\Search;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
+use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 
 class TranslationFileController extends ActionController
 {
@@ -85,7 +86,7 @@ class TranslationFileController extends ActionController
         if ($search !== null) {
             if ($search->checkIfIgnoreExactMatchInView()) {
                 $this->addFlashMessage('', 'Search with exact match', FlashMessage::INFO);
-            };
+            }
         }
         $this->view->assign('search', $search);
         $this->view->assign('translationFiles', $translationFiles);

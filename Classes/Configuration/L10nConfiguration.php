@@ -1,4 +1,5 @@
 <?php
+
 namespace B13\L10nTranslator\Configuration;
 
 /*
@@ -11,12 +12,6 @@ namespace B13\L10nTranslator\Configuration;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * @package TYPO3
- * @subpackage l10n_translator
- *
- * Helper Class for more convenient access to the extension configuration
- */
 class L10nConfiguration implements SingletonInterface
 {
     /**

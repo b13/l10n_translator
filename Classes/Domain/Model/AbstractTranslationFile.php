@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace B13\L10nTranslator\Domain\Model;
@@ -18,7 +19,7 @@ abstract class AbstractTranslationFile
     /**
      * @var \splFileInfo
      */
-    protected $splFileInfo = null;
+    protected $splFileInfo;
 
     /**
      * @var string

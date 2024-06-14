@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace B13\L10nTranslator\Domain\Service;
@@ -148,6 +149,7 @@ class TranslationFileService implements SingletonInterface
     {
         $translationFile = $this->translationFileFactory->findByPath($l10nFile);
         $l10nTranslationFile = $translationFile->getL10nTranslationFile($language);
+        $l10nTranslationFile->fillMissingTranslationsFromOriginalFileAndLanguage($language);
         foreach ($translationFile->getTranslations() as $translation) {
             if ($l10nTranslationFile->hasOwnTranslation($translation) === false) {
                 $l10nTranslationFile->addTranslation($translation);

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace B13\L10nTranslator\Controller\Ajax;
@@ -46,33 +47,33 @@ class TranslationController
 
     public function update(ServerRequestInterface $request): JsonResponse
     {
+        $this->assureModuleAccess();
+        $postParams = $request->getParsedBody();
+        $this->validateRequest($postParams);
+        $translationFile = $this->translationFileFactory->findByPath($postParams['path']);
+        $l10nTranslationFile = $translationFile->getL10nTranslationFile($postParams['language']);
+        $translation = new Translation($postParams['path'], $postParams['key'], $postParams['target']);
+        $l10nTranslationFile->upsertTranslationTarget($translation);
+        $this->translationFileWriterService->writeTranslation($l10nTranslationFile);
+        if ($postParams['language'] === 'default') {
+            $this->translationFileService->updateSourceInFiles($postParams);
+        }
+        $this->flushCache();
+        $content = [
+            'flashMessage' => [
+                'title' => 'OK',
+                'message' => 'label updated',
+                'severity' => AbstractMessage::OK,
+            ],
+        ];
         try {
-            $this->assureModuleAccess();
-            $postParams = $request->getParsedBody();
-            $this->validateRequest($postParams);
-            $translationFile = $this->translationFileFactory->findByPath($postParams['path']);
-            $l10nTranslationFile = $translationFile->getL10nTranslationFile($postParams['language']);
-            $translation = new Translation($postParams['path'], $postParams['key'], $postParams['target']);
-            $l10nTranslationFile->upsertTranslationTarget($translation);
-            $this->translationFileWriterService->writeTranslation($l10nTranslationFile);
-            if ($postParams['language'] === 'default') {
-                $this->translationFileService->updateSourceInFiles($postParams);
-            }
-            $this->flushCache();
-            $content = [
-                'flashMessage' => [
-                    'title' => 'OK',
-                    'message' => 'label updated',
-                    'severity' => AbstractMessage::OK
-                ]
-            ];
         } catch (\Exception $e) {
             $content = [
                 'flashMessage' => [
                     'title' => 'ERROR',
                     'message' => $e->getMessage() . ' - ' . $e->getCode(),
-                    'severity' => AbstractMessage::ERROR
-                ]
+                    'severity' => AbstractMessage::ERROR,
+                ],
             ];
         }
 

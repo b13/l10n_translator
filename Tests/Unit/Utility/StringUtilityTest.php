@@ -1,4 +1,5 @@
 <?php
+
 namespace B13\L10nTranslator\Tests\Unit\Utility;
 
 /*
@@ -18,9 +19,6 @@ use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
 /**
  * Testcase for class \B13\L10nTranslator\StringUtility
- *
- * @package TYPO3
- * @subpackage l10n_translator
  */
 class StringUtilityTest extends UnitTestCase
 {
@@ -28,13 +26,12 @@ class StringUtilityTest extends UnitTestCase
      * @dataProvider stripPathToLanguageFileDataProvider
      * @param string $fullPath
      * @param string $expectation
-     * @return void
      * @test
      */
     public function stripPathToLanguageFile($fullPath, $expectation)
     {
         $stringUtility = new StringUtility();
-        $this->assertSame($expectation, $stringUtility->stripPathToLanguageFile($fullPath));
+        self::assertSame($expectation, $stringUtility->stripPathToLanguageFile($fullPath));
     }
 
     /**
@@ -47,16 +44,16 @@ class StringUtilityTest extends UnitTestCase
         return [
             'Strips off path to private resources' => [
                 'news/Resources/Private/Language/locallang.xlf',
-                'news (locallang.xlf)'
+                'news (locallang.xlf)',
             ],
             'Strips off path to pi1' => [
                 'old_ext/pi1/locallang.xml',
-                'old_ext (locallang.xml)'
+                'old_ext (locallang.xml)',
             ],
             'Returns string that does not match' => [
                 'my_ext/path/to/locallang.xlf',
-                'my_ext/path/to/locallang.xlf'
-            ]
+                'my_ext/path/to/locallang.xlf',
+            ],
         ];
     }
 }
