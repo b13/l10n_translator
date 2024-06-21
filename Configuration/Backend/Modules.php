@@ -10,7 +10,7 @@ return [
         'path' => '/module/web/l10ntranslator',
         'workspaces' => 'live',
         'iconIdentifier' => 'b13_l10ntranslator',
-        'navigationComponentId' => 'TYPO3/CMS/Backend/PageTree/PageTreeElement',
+        'navigationComponentId' => '',
         'inheritNavigationComponentFromMainModule' => false,
         'labels' => 'LLL:EXT:l10n_translator/Resources/Private/Language/locallang_translator.xlf',
         'extensionName' => 'L10nTranslator',

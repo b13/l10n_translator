@@ -26,22 +26,12 @@ use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 
 class TranslationFileController extends ActionController
 {
-    protected TranslationFileFactory $translationFileFactory;
-    protected StringUtility $stringUtility;
-    private PageRenderer $pageRenderer;
-    private ModuleTemplateFactory $moduleTemplateFactory;
-
     public function __construct(
-        PageRenderer $pageRenderer,
-        TranslationFileFactory $translationFileFactory,
-        StringUtility $stringUtility,
-        ModuleTemplateFactory $moduleTemplateFactory
-    ) {
-        $this->pageRenderer = $pageRenderer;
-        $this->translationFileFactory = $translationFileFactory;
-        $this->stringUtility = $stringUtility;
-        $this->moduleTemplateFactory = $moduleTemplateFactory;
-    }
+        protected readonly PageRenderer $pageRenderer,
+        protected readonly TranslationFileFactory $translationFileFactory,
+        private readonly StringUtility $stringUtility,
+        private readonly ModuleTemplateFactory $moduleTemplateFactory
+    ) {}
 
     protected function initializeListAction(): void
     {
