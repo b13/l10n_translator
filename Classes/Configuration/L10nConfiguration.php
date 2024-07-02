@@ -14,30 +14,11 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class L10nConfiguration implements SingletonInterface
 {
-    /**
-     * @var array
-     */
-    protected $availableL10nFiles = [];
-
-    /**
-     * @var array
-     */
-    protected $absolutePathsToConfiguredFiles = [];
-
-    /**
-     * @var bool
-     */
-    protected $supportsDefault = false;
-
-    /**
-     * @var bool
-     */
-    protected $allowHtmlInLabel = false;
-
-    /**
-     * @var array
-     */
-    protected $availableLanguages = [];
+    protected array $availableL10nFiles = [];
+    protected array $absolutePathsToConfiguredFiles = [];
+    protected bool $supportsDefault = false;
+    protected bool $allowHtmlInLabel = false;
+    protected array $availableLanguages = [];
 
     /**
      * L10nConfiguration constructor.
@@ -62,66 +43,52 @@ class L10nConfiguration implements SingletonInterface
         }
 
         $this->allowHtmlInLabel = (bool)$GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS']['l10n_translator']['allowHtmlInLabel'];
+
+        if (!empty($this->availableL10nFiles) && empty($this->absolutePathsToConfiguredFiles)) {
+            foreach ($this->availableL10nFiles as $availableL10nFile) {
+                $this->absolutePathsToConfiguredFiles['EXT:' . $availableL10nFile] = GeneralUtility::getFileAbsFileName('EXT:' . $availableL10nFile);
+            }
+        }
     }
 
-    /**
-     * @return array
-     */
     public function getAvailableL10nFiles(): array
     {
         return $this->availableL10nFiles;
     }
 
-    /**
-     * @return array
-     */
     public function getAbsolutePathsToConfiguredFiles(): array
     {
-        if (!empty($this->availableL10nFiles) && empty($this->absolutePathsToConfiguredFiles)) {
-            foreach ($this->availableL10nFiles as $availableL10nFile) {
-                $this->absolutePathsToConfiguredFiles[] = GeneralUtility::getFileAbsFileName('EXT:' . $availableL10nFile);
-            }
-        }
         return $this->absolutePathsToConfiguredFiles;
     }
 
-    /**
-     * @return bool
-     */
     public function supportsDefault(): bool
     {
         return $this->supportsDefault;
     }
 
-    /**
-     * @param string $file
-     * @return bool
-     */
     public function isFileAvailable(string $file): bool
     {
         return in_array($file, $this->availableL10nFiles);
     }
 
-    /**
-     * @param string $file
-     * @return bool
-     */
     public function isAbsoluteFilePathAvailable(string $file): bool
     {
-        return in_array($file, $this->getAbsolutePathsToConfiguredFiles());
+        return in_array($file, $this->getAbsolutePathsToConfiguredFiles(), true);
     }
 
-    /**
-     * @return array
-     */
+    public function getExtensionPathSyntaxForAbsolutePath(string $file): string
+    {
+        if (!$this->isAbsoluteFilePathAvailable($file)) {
+            return '';
+        }
+        return array_search($file, $this->absolutePathsToConfiguredFiles);
+    }
+
     public function getAvailableL10nLanguages(): array
     {
         return $this->availableLanguages;
     }
 
-    /**
-     * @return bool
-     */
     public function isHtmlAllowed(): bool
     {
         return $this->allowHtmlInLabel;

@@ -51,10 +51,16 @@ class XliffParser extends \TYPO3\CMS\Core\Localization\Parser\XliffParser
             return parent::_getParsedData($sourcePath, $languageKey, $labelsPath);
         }
 
-        // copied from parent::getParsedData from here on
-        $this->sourcePath = $sourcePath;
         $this->languageKey = $languageKey;
-        $this->sourcePath = $this->getLocalizedFileName($this->sourcePath, $this->languageKey);
+        $this->sourcePath = $this->getLocalizedFileName(
+            str_replace(
+                'EXT:',
+                Environment::getExtensionsPath() . '/',
+                $l10nManagerConfiguration->getExtensionPathSyntaxForAbsolutePath($sourcePath)
+            ),
+            $this->languageKey
+        );
+        // copied from parent::getParsedData from here on
         if (!@is_file($this->sourcePath)) {
             // Global localization is not available, try split localization file
             $this->sourcePath = $this->getLocalizedFileName($sourcePath, $languageKey, true);
