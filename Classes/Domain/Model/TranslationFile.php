@@ -13,7 +13,7 @@ namespace B13\L10nTranslator\Domain\Model;
  */
 
 use TYPO3\CMS\Core\Core\Environment;
-use TYPO3\CMS\Core\Localization\LocalizationFactory;
+use TYPO3\CMS\Core\Localization\Parser\XliffParser;
 use TYPO3\CMS\Core\Package\PackageManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -22,7 +22,7 @@ class TranslationFile extends AbstractTranslationFile
     /** @var L10nTranslationFile[] */
     protected array $l10nTranslationFiles = [];
 
-    public function initFileSystem(\SplFileInfo $splFileInfo, array $languages, LocalizationFactory $localizationFactory): void
+    public function initFileSystem(\SplFileInfo $splFileInfo, array $languages, XliffParser $xliffParser): void
     {
         /** @var PackageManager $packageManager */
         $packageManager = GeneralUtility::makeInstance(PackageManager::class);
@@ -46,20 +46,20 @@ class TranslationFile extends AbstractTranslationFile
         }
         $this->language = 'default';
         $this->extension = $parts[0];
-        $this->initTranslations($localizationFactory);
+        $this->initTranslations($xliffParser);
         foreach ($languages as $language) {
             $path = $this->getL10nTranslationFilePath($language);
             $splFileInfo = new \SplFileInfo($path);
             $l10nTranslationFile = new L10nTranslationFile($this);
-            $l10nTranslationFile->initFileSystem($splFileInfo, $localizationFactory);
+            $l10nTranslationFile->initFileSystem($splFileInfo, $xliffParser);
             $l10nTranslationFile->initMissingTranslations();
             $this->l10nTranslationFiles[$language] = $l10nTranslationFile;
         }
     }
 
-    protected function getParsedData(LocalizationFactory $localizationFactory): array
+    protected function getParsedData(XliffParser $xliffParser): array
     {
-        return $localizationFactory->getParsedData($this->getCleanPath(), $this->getLanguage());
+        return $xliffParser->getParsedData($this->getCleanPath(), $this->getLanguage());
     }
 
     public function getL10nTranslationFile(string $language): L10nTranslationFile

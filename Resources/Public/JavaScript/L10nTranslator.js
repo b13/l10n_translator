@@ -1,52 +1,47 @@
+import DocumentService from '@typo3/core/document-service.js';
+import AjaxRequest from '@typo3/core/ajax/ajax-request.js';
+import Notification from '@typo3/backend/notification.js';
 
-define(['jquery'], function ($) {
-    'use strict';
+/**
+ * Submits changed labels of the translation module via AJAX.
+ */
+class L10nTranslator {
+    constructor() {
+        this.initialize();
+    }
 
-    var L10nTranslator = {};
+    async initialize() {
+        await DocumentService.ready();
+        document.addEventListener('submit', (event) => {
+            const form = event.target.closest('.l10n-translation-translation');
+            if (form === null) {
+                return;
+            }
+            event.preventDefault();
 
-    L10nTranslator.init = function() {
-
-        $(document).on('submit', '.l10n-translation-translation', function (ev) {
-            ev.preventDefault();
-
-            var data = {
-                language: $('input[name=language]', $(this)).val(),
-                path: $('input[name=path]', $(this)).val(),
-                target: $('[name=target]', $(this)).val(),
-                key: $('input[name=key]', $(this)).val()
+            const data = {
+                language: form.querySelector('input[name=language]').value,
+                path: form.querySelector('input[name=path]').value,
+                target: form.querySelector('[name=target]').value,
+                key: form.querySelector('input[name=key]').value,
             };
 
-            $.ajax({
-                type: 'POST',
-                url: TYPO3.settings.ajaxUrls['L10nTranslator_update'],
-                data: data,
-                dataType: 'json',
-                success: function (response) {
-                    top.TYPO3.Notification.showMessage(
-                        response.flashMessage.title,
-                        response.flashMessage.message,
-                        response.flashMessage.severity,
+            new AjaxRequest(TYPO3.settings.ajaxUrls['L10nTranslator_update'])
+                .post(data)
+                .then(async (response) => {
+                    const body = await response.resolve();
+                    Notification.showMessage(
+                        body.flashMessage.title,
+                        body.flashMessage.message,
+                        body.flashMessage.severity,
                         5
                     );
-
-                },
-                error: function(XMLHttpRequest, textStatus, errorThrown) {
-                    top.TYPO3.Notification.showMessage(
-                        'Status: ' + textStatus,
-                        'Error: ' + errorThrown,
-                        top.TYPO3.Severity.error,
-                        5
-                    );
-                }
-            });
-
+                })
+                .catch((error) => {
+                    Notification.error('Error', String(error.response?.status ?? error), 5);
+                });
         });
-    };
+    }
+}
 
-    $(document).ready(function() {
-        L10nTranslator.init();
-    });
-
-});
-
-
+export default new L10nTranslator();

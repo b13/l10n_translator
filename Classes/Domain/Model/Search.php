@@ -14,88 +14,29 @@ namespace B13\L10nTranslator\Domain\Model;
 
 class Search
 {
-    /**
-     * @var string
-     */
-    protected $searchString = '';
-
-    /**
-     * @var string
-     */
-    protected $language = '';
-
-    /**
-     * @var string
-     */
-    protected $l10nFile = '';
-
-    /**
-     * @var bool
-     */
-    protected $caseSensitive = false;
-
-    /**
-     * @var bool
-     */
-    protected $exactMatch = false;
-
-    /**
-     * @var bool
-     */
-    protected $includeSource = true;
-
-    /**
-     * @var bool
-     */
-    protected $includeKey = true;
-
-    /**
-     * For unmark the flag in the exactSearch, if the search come from the link of the defaultSource
-     * @var bool
-     */
-    protected $onlyOneTimeExactSearch = false;
-
-    /**
-     * @param string $searchString
-     * @param string $language
-     * @param string $l10nFile
-     * @param bool $caseSensitive
-     * @param bool $exactMatch
-     * @param bool $includeSource
-     * @param bool $includeKey
-     * @param bool $onlyOneTimeExactSearch
-     */
-    public function __construct(string $searchString = '', string $language = '', string $l10nFile = '', bool $caseSensitive = false, bool $exactMatch = false, bool $includeSource = true, bool $includeKey = true, bool $onlyOneTimeExactSearch = false)
-    {
-        $this->searchString = $searchString;
-        $this->language = $language;
-        $this->l10nFile = $l10nFile;
-        $this->caseSensitive = $caseSensitive;
-        $this->exactMatch = $exactMatch;
-        $this->includeSource = $includeSource;
-        $this->includeKey = $includeKey;
-        $this->onlyOneTimeExactSearch = $onlyOneTimeExactSearch;
+    public function __construct(
+        readonly protected string $searchString = '',
+        readonly protected string $language = '',
+        readonly protected string $l10nFile = '',
+        readonly protected bool $caseSensitive = false,
+        protected bool $exactMatch = false,
+        readonly protected bool $includeSource = true,
+        readonly protected bool $includeKey = true,
+        /** For unmark the flag in the exactSearch, if the search come from the link of the defaultSource */
+        readonly protected bool $onlyOneTimeExactSearch = false
+    ) {
     }
 
-    /**
-     * @return string $searchString
-     */
     public function getSearchString(): string
     {
         return $this->searchString;
     }
 
-    /**
-     * @return string $language
-     */
     public function getLanguage(): string
     {
         return $this->language;
     }
 
-    /**
-     * @return string $l10nFile
-     */
     public function getL10nFile(): string
     {
         return $this->l10nFile;

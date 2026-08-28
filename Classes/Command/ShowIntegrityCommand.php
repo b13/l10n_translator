@@ -6,6 +6,7 @@ namespace B13\L10nTranslator\Command;
 
 use B13\L10nTranslator\Command\Helper\L10nTranslatorCommand;
 use B13\L10nTranslator\Domain\Model\Search;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -45,6 +46,6 @@ class ShowIntegrityCommand extends L10nTranslatorCommand
                 }
             }
         }
-        return 0;
+        return Command::SUCCESS;
     }
 }

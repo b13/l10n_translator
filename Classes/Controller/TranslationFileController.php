@@ -19,7 +19,7 @@ use B13\L10nTranslator\Exception;
 use B13\L10nTranslator\Utility\StringUtility;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
-use TYPO3\CMS\Core\Messaging\FlashMessage;
+use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
@@ -49,10 +49,10 @@ class TranslationFileController extends ActionController
         }
     }
 
-    public function listAction(Search $search = null): ResponseInterface
+    public function listAction(?Search $search = null): ResponseInterface
     {
         $l10nConfiguration = GeneralUtility::makeInstance(L10nConfiguration::class);
-        $this->pageRenderer->loadRequireJsModule('TYPO3/CMS/L10nTranslator/L10nTranslator');
+        $this->pageRenderer->loadJavaScriptModule('@b13/l10n-translator/L10nTranslator.js');
         $translationFiles = [];
         $availableL10nFiles = $l10nConfiguration->getAvailableL10nFiles();
         $availableLanguages = $l10nConfiguration->getAvailableL10nLanguages();
@@ -64,23 +64,23 @@ class TranslationFileController extends ActionController
         foreach ($availableL10nFiles as $availableL10nFile) {
             $l10nFiles[$availableL10nFile] = $this->stringUtility->stripPathToLanguageFile($availableL10nFile);
         }
-        $this->view->assign('l10nFiles', $l10nFiles);
-        $this->view->assign('languages', $languages);
+        $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
+        $moduleTemplate->assign('l10nFiles', $l10nFiles);
+        $moduleTemplate->assign('languages', $languages);
         if ($search !== null) {
             try {
                 $translationFiles = $this->translationFileFactory->findBySearch($search);
             } catch (Exception $e) {
-                $this->addFlashMessage($e->getMessage() . ' - ' . $e->getCode(), '', FlashMessage::ERROR);
+                $this->addFlashMessage($e->getMessage() . ' - ' . $e->getCode(), '', ContextualFeedbackSeverity::ERROR);
             }
         }
         if ($search !== null) {
             if ($search->checkIfIgnoreExactMatchInView()) {
-                $this->addFlashMessage('', 'Search with exact match', FlashMessage::INFO);
+                $this->addFlashMessage('', 'Search with exact match', ContextualFeedbackSeverity::INFO);
             }
         }
-        $this->view->assign('search', $search);
-        $this->view->assign('translationFiles', $translationFiles);
-        $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
-        return $this->htmlResponse($moduleTemplate->setContent($this->view->render())->renderContent());
+        $moduleTemplate->assign('search', $search);
+        $moduleTemplate->assign('translationFiles', $translationFiles);
+        return $moduleTemplate->renderResponse('TranslationFile/List');
     }
 }

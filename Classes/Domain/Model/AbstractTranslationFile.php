@@ -12,39 +12,20 @@ namespace B13\L10nTranslator\Domain\Model;
  * of the License, or any later version.
  */
 
-use TYPO3\CMS\Core\Localization\LocalizationFactory;
+use TYPO3\CMS\Core\Localization\Parser\XliffParser;
 
 abstract class AbstractTranslationFile
 {
-    /**
-     * @var \splFileInfo
-     */
-    protected $splFileInfo;
+    protected ?\splFileInfo $splFileInfo = null;
+    protected string $language = '';
+    protected string $extension = '';
+    protected string $relativePath = '';
 
-    /**
-     * @var string
-     */
-    protected $language = '';
+    /** @var Translation[] */
+    protected array $translations = [];
 
-    /**
-     * @var string
-     */
-    protected $extension = '';
-
-    /**
-     * @var string
-     */
-    protected $relativePath = '';
-
-    /**
-     * @var Translation[]
-     */
-    protected $translations = [];
-
-    /**
-     * @var Translation[]
-     */
-    protected $matchedTranslations = [];
+    /** @var Translation[] */
+    protected array $matchedTranslations = [];
 
     public function getCleanPath(): string
     {
@@ -60,12 +41,9 @@ abstract class AbstractTranslationFile
         return $arr;
     }
 
-    /**
-     * @param LocalizationFactory $localizationFactory
-     */
-    protected function initTranslations(LocalizationFactory $localizationFactory): void
+    protected function initTranslations(XliffParser $xliffParser): void
     {
-        $parsedData = $this->getParsedData($localizationFactory);
+        $parsedData = $this->getParsedData($xliffParser);
         foreach ($parsedData[$this->getLanguage()] as $key => $labels) {
             if (isset($labels[0]['source']) === true && isset($labels[0]['target']) === true) {
                 $translation = new Translation($this->getCleanPath(), $key, $labels[0]['target'], $labels[0]['source']);
@@ -75,13 +53,9 @@ abstract class AbstractTranslationFile
         }
     }
 
-    /**
-     * @param LocalizationFactory $localizationFactory
-     */
-    abstract protected function getParsedData(LocalizationFactory $localizationFactory): array;
+    abstract protected function getParsedData(XliffParser $xliffParser): array;
 
     /**
-     * @param Search $search
      * @return Translation[]
      */
     public function getTranslationsBySearch(Search $search): array
@@ -95,9 +69,6 @@ abstract class AbstractTranslationFile
         return $filtered;
     }
 
-    /**
-     * @param Search $search
-     */
     public function hasTranslationOfSearch(Search $search): bool
     {
         foreach ($this->getTranslations() as $translation) {
@@ -108,9 +79,6 @@ abstract class AbstractTranslationFile
         return false;
     }
 
-    /**
-     * @param Translation $translation
-     */
     public function replaceTranslationTarget(Translation $translation): void
     {
         $replaced = [];
@@ -124,9 +92,6 @@ abstract class AbstractTranslationFile
         $this->translations = $replaced;
     }
 
-    /**
-     * @param Translation $translation
-     */
     public function replaceTranslationSource(Translation $translation): void
     {
         $replaced = [];
@@ -140,10 +105,7 @@ abstract class AbstractTranslationFile
         $this->translations = $replaced;
     }
 
-    /**
-     * @param Translation $translation
-     */
-    public function getOwnTranslation(Translation $translation): ?\B13\L10nTranslator\Domain\Model\Translation
+    public function getOwnTranslation(Translation $translation): ?Translation
     {
         foreach ($this->getTranslations() as $ownTranslation) {
             if ($translation->getTranslationKey() === $ownTranslation->getTranslationKey()) {
@@ -153,17 +115,11 @@ abstract class AbstractTranslationFile
         return null;
     }
 
-    /**
-     * @param Translation $translation
-     */
     public function hasOwnTranslation(Translation $translation): bool
     {
         return $this->getOwnTranslation($translation) !== null;
     }
 
-    /**
-     * @param Translation $translation
-     */
     public function addTranslation(Translation $translation): void
     {
         $this->translations[] = $translation;
@@ -184,9 +140,7 @@ abstract class AbstractTranslationFile
         return $this->extension;
     }
 
-    /**
-     * @return Translation[]
-     */
+    /** @return Translation[] */
     public function getTranslations(): array
     {
         return $this->translations;
@@ -197,9 +151,7 @@ abstract class AbstractTranslationFile
         return $this->relativePath;
     }
 
-    /**
-     * @return Translation[]
-     */
+    /** @return Translation[] */
     public function getMatchedTranslations(): array
     {
         return $this->matchedTranslations;
