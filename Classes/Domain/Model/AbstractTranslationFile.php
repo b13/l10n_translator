@@ -16,7 +16,7 @@ use TYPO3\CMS\Core\Localization\Parser\XliffParser;
 
 abstract class AbstractTranslationFile
 {
-    protected ?\splFileInfo $splFileInfo = null;
+    protected ?\SplFileInfo $splFileInfo = null;
     protected string $language = '';
     protected string $extension = '';
     protected string $relativePath = '';

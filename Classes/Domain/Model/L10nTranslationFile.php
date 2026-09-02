@@ -29,9 +29,9 @@ class L10nTranslationFile extends AbstractTranslationFile
     {
     }
 
-    public function initFileSystem(\SplFileInfo $splFileInfo, XliffParser $localizationFactory): void
+    public function initFileSystem(\SplFileInfo $splFileInfo, XliffParser $xliffParser): void
     {
-        $this->xliffParser = $localizationFactory;
+        $this->xliffParser = $xliffParser;
         $this->splFileInfo = $splFileInfo;
         $pathPart = str_replace('/', '\/', Environment::getLabelsPath() . DIRECTORY_SEPARATOR);
         $this->relativePath = preg_replace('/' . $pathPart . '/', '', $this->getCleanPath());
@@ -41,7 +41,7 @@ class L10nTranslationFile extends AbstractTranslationFile
         }
         $this->language = $parts[0];
         $this->extension = $parts[1];
-        $this->initTranslations($localizationFactory);
+        $this->initTranslations($xliffParser);
     }
 
     public function fillMissingTranslationsFromOriginalFileAndLanguage(string $language): void

@@ -67,6 +67,9 @@ readonly class TranslationFileFactory implements SingletonInterface
         $availableL10nFiles = $search->hasL10nFile() ? [$search->getL10nFile()] : $this->l10nConfiguration->getAvailableL10nFiles();
         foreach ($availableL10nFiles as $availableL10nFile) {
             $path = GeneralUtility::getFileAbsFileName('EXT:' . $availableL10nFile);
+            if ($path === '') {
+                continue;
+            }
             $translationFile = new TranslationFile();
             $translationFile->initFileSystem(new \SplFileInfo($path), $languages, $this->xliffParser);
             $translationFile->applySearch($search);
