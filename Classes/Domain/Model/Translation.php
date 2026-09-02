@@ -14,32 +14,8 @@ namespace B13\L10nTranslator\Domain\Model;
 
 class Translation
 {
-    /**
-     * @var string
-     */
-    protected $translationSource = '';
-
-    /**
-     * @var string
-     */
-    protected $translationTarget = '';
-
-    /**
-     * @var string
-     */
-    protected $translationKey = '';
-
-    /**
-     * @var string
-     */
-    protected $path = '';
-
-    public function __construct(string $path, string $translationKey, string $translationTarget, string $translationSource = '')
+    public function __construct(protected string $path, protected string $translationKey, protected string $translationTarget, protected string $translationSource = '')
     {
-        $this->path = $path;
-        $this->translationKey = $translationKey;
-        $this->translationSource = $translationSource;
-        $this->translationTarget = $translationTarget;
     }
 
     protected function exactMatchSearch(Search $search): bool

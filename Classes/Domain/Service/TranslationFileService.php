@@ -21,18 +21,11 @@ use TYPO3\CMS\Core\SingletonInterface;
 
 class TranslationFileService implements SingletonInterface
 {
-    protected TranslationFileFactory $translationFileFactory;
-    protected TranslationFileWriterService $translationFileWriterService;
-    protected L10nConfiguration $l10nConfiguration;
-
     public function __construct(
-        L10nConfiguration $l10nConfiguration,
-        TranslationFileFactory $translationFileFactory,
-        TranslationFileWriterService $translationFileWriterService
+        protected L10nConfiguration $l10nConfiguration,
+        protected TranslationFileFactory $translationFileFactory,
+        protected TranslationFileWriterService $translationFileWriterService
     ) {
-        $this->l10nConfiguration = $l10nConfiguration;
-        $this->translationFileFactory = $translationFileFactory;
-        $this->translationFileWriterService = $translationFileWriterService;
     }
 
     public function createMissingFiles(string $language, bool $copyLabels = true): void

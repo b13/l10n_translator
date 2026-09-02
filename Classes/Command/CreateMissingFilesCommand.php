@@ -6,6 +6,7 @@ namespace B13\L10nTranslator\Command;
 
 use B13\L10nTranslator\Command\Helper\L10nTranslatorCommand;
 use B13\L10nTranslator\Domain\Model\Exception;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -59,6 +60,6 @@ class CreateMissingFilesCommand extends L10nTranslatorCommand
             );
         }
         $this->flushCache();
-        return 0;
+        return Command::SUCCESS;
     }
 }

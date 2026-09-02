@@ -15,37 +15,16 @@ use B13\L10nTranslator\Domain\Model\Search;
  * of the License, or any later version.
  */
 use B13\L10nTranslator\Domain\Model\TranslationFile;
-use TYPO3\CMS\Core\Localization\LocalizationFactory;
+use TYPO3\CMS\Core\Localization\Parser\XliffParser;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class TranslationFileFactory implements SingletonInterface
+readonly class TranslationFileFactory implements SingletonInterface
 {
-    /**
-     * @var \B13\L10nTranslator\Configuration\L10nConfiguration
-     */
-    protected $l10nConfiguration;
-
-    /**
-     * @var \TYPO3\CMS\Core\Localization\LocalizationFactory
-     */
-    protected $localizationFactory;
-
-    /**
-     * @param \B13\L10nTranslator\Configuration\L10nConfiguration $l10nConfiguration
-     */
-    public function injectL10nConfiguration(L10nConfiguration $l10nConfiguration): void
-    {
-        $this->l10nConfiguration = $l10nConfiguration;
-    }
-
-    /**
-     * @param \TYPO3\CMS\Core\Localization\LocalizationFactory $localizationFactory
-     */
-    public function injectLocalizationFactory(LocalizationFactory $localizationFactory): void
-    {
-        $this->localizationFactory = $localizationFactory;
-    }
+    public function __construct(
+        protected L10nConfiguration $l10nConfiguration,
+        protected XliffParser $xliffParser
+    ) {}
 
     public function findByRelativePath(string $relativePath, bool $raw = false): TranslationFile
     {
@@ -54,7 +33,7 @@ class TranslationFileFactory implements SingletonInterface
             throw new Exception('Cannot create splFileInfo with path ' . $relativePath, 1466093531);
         }
         $translationFile = $raw ? new RawTranslationFile() : new TranslationFile();
-        $translationFile->initFileSystem($splFileInfo, $this->l10nConfiguration->getAvailableL10nLanguages(), $this->localizationFactory);
+        $translationFile->initFileSystem($splFileInfo, $this->l10nConfiguration->getAvailableL10nLanguages(), $this->xliffParser);
         return $translationFile;
     }
 
@@ -68,7 +47,7 @@ class TranslationFileFactory implements SingletonInterface
                 throw new Exception('cannot create splFileInfo with path ' . $path, 1466093537);
             }
             $translationFile = $raw ? new RawTranslationFile() : new TranslationFile();
-            $translationFile->initFileSystem($splFileInfo, $this->l10nConfiguration->getAvailableL10nLanguages(), $this->localizationFactory);
+            $translationFile->initFileSystem($splFileInfo, $this->l10nConfiguration->getAvailableL10nLanguages(), $this->xliffParser);
         }
         return $translationFile;
     }
@@ -82,11 +61,17 @@ class TranslationFileFactory implements SingletonInterface
     {
         $translationFiles = [];
         $languages = $search->hasLanguage() ? [$search->getLanguage()] : $this->l10nConfiguration->getAvailableL10nLanguages();
+        if ($search->hasL10nFile() && !in_array($search->getL10nFile(), $this->l10nConfiguration->getAvailableL10nFiles(), true)) {
+            throw new Exception('File not configured: ' . $search->getL10nFile(), 1466093540);
+        }
         $availableL10nFiles = $search->hasL10nFile() ? [$search->getL10nFile()] : $this->l10nConfiguration->getAvailableL10nFiles();
         foreach ($availableL10nFiles as $availableL10nFile) {
             $path = GeneralUtility::getFileAbsFileName('EXT:' . $availableL10nFile);
+            if ($path === '') {
+                continue;
+            }
             $translationFile = new TranslationFile();
-            $translationFile->initFileSystem(new \SplFileInfo($path), $languages, $this->localizationFactory);
+            $translationFile->initFileSystem(new \SplFileInfo($path), $languages, $this->xliffParser);
             $translationFile->applySearch($search);
             $translationFiles[] = $translationFile;
         }

@@ -12,7 +12,7 @@ namespace B13\L10nTranslator\Domain\Model;
  * of the License, or any later version.
  */
 
-use TYPO3\CMS\Core\Localization\LocalizationFactory;
+use TYPO3\CMS\Core\Localization\Parser\XliffParser;
 
 /**
  * Representation of an original translation file within an extension.
@@ -23,14 +23,14 @@ use TYPO3\CMS\Core\Localization\LocalizationFactory;
  */
 class RawTranslationFile extends TranslationFile
 {
-    protected function getParsedData(LocalizationFactory $localizationFactory): array
+    protected function getParsedData(XliffParser $xliffParser): array
     {
-        return $localizationFactory->getParsedData($this->getCleanPath(), $this->getLanguage(), null, null, true);
+        return $xliffParser->getParsedData($this->getCleanPath(), $this->getLanguage());
     }
 
-    public function initFileSystem(\SplFileInfo $splFileInfo, array $languages, LocalizationFactory $localizationFactory): void
+    public function initFileSystem(\SplFileInfo $splFileInfo, array $languages, XliffParser $xliffParser): void
     {
-        parent::initFileSystem($splFileInfo, $languages, $localizationFactory);
+        parent::initFileSystem($splFileInfo, $languages, $xliffParser);
         foreach ($this->l10nTranslationFiles as $l10nTranslationFile) {
             $l10nTranslationFile->removeObsoleteTranslations();
         }

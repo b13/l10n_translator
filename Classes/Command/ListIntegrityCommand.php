@@ -6,6 +6,7 @@ namespace B13\L10nTranslator\Command;
 
 use B13\L10nTranslator\Command\Helper\L10nTranslatorCommand;
 use B13\L10nTranslator\Domain\Model\Search;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -34,6 +35,6 @@ class ListIntegrityCommand extends L10nTranslatorCommand
         if ($countDiffFiles > 0) {
             $output->writeln('WARNING: ' . $countDiffFiles . ' of ' . $countFiles . ' differ');
         }
-        return 0;
+        return Command::SUCCESS;
     }
 }

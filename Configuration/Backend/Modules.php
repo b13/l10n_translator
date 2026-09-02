@@ -6,7 +6,7 @@ return [
     'web_B13L10ntranslator' => [
         'parent' => 'web',
         'position' => [],
-        'access' => 'user,group',
+        'access' => 'user',
         'path' => '/module/web/l10ntranslator',
         'workspaces' => 'live',
         'iconIdentifier' => 'b13_l10ntranslator',

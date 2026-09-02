@@ -13,7 +13,8 @@ namespace B13\L10nTranslator\Domain\Model;
  */
 
 use TYPO3\CMS\Core\Core\Environment;
-use TYPO3\CMS\Core\Localization\LocalizationFactory;
+use TYPO3\CMS\Core\Localization\Exception\FileNotFoundException;
+use TYPO3\CMS\Core\Localization\Parser\XliffParser;
 
 class L10nTranslationFile extends AbstractTranslationFile
 {
@@ -22,15 +23,15 @@ class L10nTranslationFile extends AbstractTranslationFile
 
     /** @var Translation[] */
     protected array $matchedMissingTranslations = [];
-    protected ?LocalizationFactory $localizationFactory = null;
+    protected ?XliffParser $xliffParser = null;
 
     public function __construct(protected TranslationFile $translationFile)
     {
     }
 
-    public function initFileSystem(\SplFileInfo $splFileInfo, LocalizationFactory $localizationFactory): void
+    public function initFileSystem(\SplFileInfo $splFileInfo, XliffParser $xliffParser): void
     {
-        $this->localizationFactory = $localizationFactory;
+        $this->xliffParser = $xliffParser;
         $this->splFileInfo = $splFileInfo;
         $pathPart = str_replace('/', '\/', Environment::getLabelsPath() . DIRECTORY_SEPARATOR);
         $this->relativePath = preg_replace('/' . $pathPart . '/', '', $this->getCleanPath());
@@ -40,15 +41,19 @@ class L10nTranslationFile extends AbstractTranslationFile
         }
         $this->language = $parts[0];
         $this->extension = $parts[1];
-        $this->initTranslations($localizationFactory);
+        $this->initTranslations($xliffParser);
     }
 
     public function fillMissingTranslationsFromOriginalFileAndLanguage(string $language): void
     {
-        if ($this->localizationFactory === null) {
+        if ($this->xliffParser === null) {
             return;
         }
-        $parsedData = $this->localizationFactory->getParsedData($this->getTranslationFile()->getCleanPath(), $language);
+        try {
+            $parsedData = $this->xliffParser->getParsedData($this->getTranslationFile()->getCleanPath(), $language);
+        } catch (FileNotFoundException) {
+            return;
+        }
         foreach ($parsedData[$language] as $key => $labels) {
             if (!isset($labels[0]['source']) || !isset($labels[0]['target'])) {
                 continue;
@@ -61,12 +66,17 @@ class L10nTranslationFile extends AbstractTranslationFile
         }
     }
 
-    protected function getParsedData(LocalizationFactory $localizationFactory): array
+    protected function getParsedData(XliffParser $xliffParser): array
     {
-        if ($this->getSplFileInfo()->isFile() === true) {
-            return $localizationFactory->getParsedData($this->getCleanPath(), $this->getLanguage());
+        try {
+            if ($this->getSplFileInfo()->isFile() === true) {
+                return $xliffParser->getParsedData($this->getCleanPath(), $this->getLanguage());
+            }
+            return $xliffParser->getParsedData($this->getTranslationFile()->getCleanPath(), $this->getLanguage());
+        } catch (FileNotFoundException) {
+            // No file for this language yet - treat as empty
+            return [$this->getLanguage() => []];
         }
-        return $localizationFactory->getParsedData($this->getTranslationFile()->getCleanPath(), $this->getLanguage());
     }
 
     public function initMissingTranslations(): void

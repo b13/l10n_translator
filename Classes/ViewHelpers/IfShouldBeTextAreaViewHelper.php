@@ -12,11 +12,12 @@ namespace B13\L10nTranslator\ViewHelpers;
  * of the License, or any later version.
  */
 
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
 
 class IfShouldBeTextAreaViewHelper extends AbstractConditionViewHelper
 {
-    const STRLEN_FOR_TEXTAREA = 50;
+    const int STRLEN_FOR_TEXTAREA = 50;
 
     public function initializeArguments(): void
     {
@@ -25,13 +26,11 @@ class IfShouldBeTextAreaViewHelper extends AbstractConditionViewHelper
     }
 
     /**
-     * Returns true if the $arguments['input'] string either
+     * Returns true if the $arguments['source'] string either
      *   * contains a line break
      *   * exceeds 50 characters
-     *
-     * @param array $arguments
      */
-    protected static function evaluateCondition($arguments = null): bool
+    public static function verdict(array $arguments, RenderingContextInterface $renderingContext): bool
     {
         return isset($arguments['source']) && (strpos($arguments['source'], PHP_EOL) !== false || strlen($arguments['source']) > self::STRLEN_FOR_TEXTAREA);
     }

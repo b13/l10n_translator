@@ -42,7 +42,7 @@ class L10nConfiguration implements SingletonInterface
             $this->supportsDefault = in_array('default', $this->availableLanguages);
         }
 
-        $this->allowHtmlInLabel = (bool)$GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS']['l10n_translator']['allowHtmlInLabel'];
+        $this->allowHtmlInLabel = (bool)($GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS']['l10n_translator']['allowHtmlInLabel'] ?? false);
 
         if (!empty($this->availableL10nFiles) && empty($this->absolutePathsToConfiguredFiles)) {
             foreach ($this->availableL10nFiles as $availableL10nFile) {

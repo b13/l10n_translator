@@ -17,32 +17,22 @@ use B13\L10nTranslator\Domain\Model\Translation;
 use B13\L10nTranslator\Domain\Service\TranslationFileService;
 use B13\L10nTranslator\Domain\Service\TranslationFileWriterService;
 use Psr\Http\Message\ServerRequestInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Http\JsonResponse;
-use TYPO3\CMS\Core\Messaging\AbstractMessage;
+use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
 
-class TranslationController
+#[Autoconfigure(public: true)]
+readonly class TranslationController
 {
-    protected TranslationFileFactory $translationFileFactory;
-    protected L10nConfiguration $l10nConfiguration;
-    protected TranslationFileWriterService $translationFileWriterService;
-    protected CacheManager $cacheManager;
-    protected TranslationFileService $translationFileService;
-
     public function __construct(
-        L10nConfiguration $l10nConfiguration,
-        TranslationFileFactory $translationFileFactory,
-        TranslationFileWriterService $translationFileWriterService,
-        TranslationFileService $translationFileService,
-        CacheManager $cacheManager
-    ) {
-        $this->l10nConfiguration = $l10nConfiguration;
-        $this->translationFileFactory = $translationFileFactory;
-        $this->translationFileWriterService = $translationFileWriterService;
-        $this->translationFileService = $translationFileService;
-        $this->cacheManager = $cacheManager;
-    }
+        protected L10nConfiguration $l10nConfiguration,
+        protected TranslationFileFactory $translationFileFactory,
+        protected TranslationFileWriterService $translationFileWriterService,
+        protected TranslationFileService $translationFileService,
+        protected CacheManager $cacheManager
+    ) {}
 
     public function update(ServerRequestInterface $request): JsonResponse
     {
@@ -63,7 +53,7 @@ class TranslationController
                 'flashMessage' => [
                     'title' => 'OK',
                     'message' => 'label updated',
-                    'severity' => AbstractMessage::OK
+                    'severity' => ContextualFeedbackSeverity::OK->value
                 ]
             ];
         } catch (\Exception $e) {
@@ -71,7 +61,7 @@ class TranslationController
                 'flashMessage' => [
                     'title' => 'ERROR',
                     'message' => $e->getMessage() . ' - ' . $e->getCode(),
-                    'severity' => AbstractMessage::ERROR
+                    'severity' => ContextualFeedbackSeverity::ERROR->value
                 ]
             ];
         }
@@ -82,7 +72,7 @@ class TranslationController
     protected function assureModuleAccess(): void
     {
         $beUser = $this->getBeUser();
-        if ($beUser->check('modules', 'web_L10nTranslatorTranslator') === false) {
+        if ($beUser->check('modules', 'web_B13L10ntranslator') === false) {
             throw new Exception('Access Denied', 1469781234);
         }
     }

@@ -9,39 +9,19 @@ use B13\L10nTranslator\Domain\Factory\TranslationFileFactory;
 use B13\L10nTranslator\Domain\Service\TranslationFileService;
 use Symfony\Component\Console\Command\Command;
 use TYPO3\CMS\Core\Cache\CacheManager;
-use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class L10nTranslatorCommand extends Command
 {
-    /**
-     * @var CacheManager
-     */
-    protected $cacheManager;
-
-    /**
-     * @var TranslationFileService
-     */
-    protected $translationFileService;
-
-    /**
-     * @var TranslationFileFactory
-     */
-    protected $factory;
-
-    public function injectTranslationFileFactory(TranslationFileFactory $factory): void
-    {
-        $this->factory = $factory;
-    }
-
-    public function injectCacheManager(CacheManager $cacheManager): void
-    {
-        $this->cacheManager = $cacheManager;
-    }
-
-    public function injectTranslationFileService(TranslationFileService $translationFileService): void
-    {
-        $this->translationFileService = $translationFileService;
+    public function __construct(
+        protected readonly TranslationFileFactory $factory,
+        protected readonly CacheManager $cacheManager,
+        protected readonly TranslationFileService $translationFileService,
+        ?string $name = null,
+        ?callable $code = null
+    ) {
+        parent::__construct($name, $code);
     }
 
     protected function flushCache(): void
@@ -52,13 +32,14 @@ class L10nTranslatorCommand extends Command
 
     protected function getAllSystemLanguages(): array
     {
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('sys_language');
-        $rows = $queryBuilder->select('language_isocode')
-            ->from('sys_language')
-            ->execute()
-            ->fetchAll();
-        $rows = $rows ?: [];
-        return array_unique(array_column($rows, 'language_isocode'));
+        $languages = [];
+        $siteFinder = GeneralUtility::makeInstance(SiteFinder::class);
+        foreach ($siteFinder->getAllSites() as $site) {
+            foreach ($site->getLanguages() as $siteLanguage) {
+                $languages[] = $siteLanguage->getTypo3Language();
+            }
+        }
+        return array_unique($languages);
     }
 
     protected function getAllConfiguredLanguages(): array

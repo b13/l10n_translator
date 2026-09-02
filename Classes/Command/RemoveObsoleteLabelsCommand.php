@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace B13\L10nTranslator\Command;
 
 use B13\L10nTranslator\Command\Helper\L10nTranslatorCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -14,6 +15,6 @@ class RemoveObsoleteLabelsCommand extends L10nTranslatorCommand
     {
         $this->flushCache();
         $this->translationFileService->removeAllObsoleteLabels();
-        return 0;
+        return Command::SUCCESS;
     }
 }
